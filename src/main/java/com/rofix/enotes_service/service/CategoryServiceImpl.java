@@ -7,7 +7,9 @@ import com.rofix.enotes_service.helper.CategoryHelper;
 import com.rofix.enotes_service.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,9 +21,16 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryHelper categoryHelper;
 
     @Override
-    public CategoryResponseDTO saveCategory(CategoryRequestDTO category) {
-        Category newCategory = modelMapper.map(category, Category.class),
-                savedCategory = categoryRepository.save(newCategory);
+    public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryDTO) {
+
+        if(categoryRepository.existsByNameIgnoreCase(categoryDTO.getName()))
+        {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Category with name '" + categoryDTO.getName() + "' already exists!");
+        }
+
+        Category newCategory = modelMapper.map(categoryDTO, Category.class);
+        newCategory.setCreatedBy(1);
+        Category savedCategory = categoryRepository.save(newCategory);
 
         return modelMapper.map(savedCategory,CategoryResponseDTO.class);
     }
@@ -52,4 +61,19 @@ public class CategoryServiceImpl implements CategoryService {
 
         return "Category with name '" + category.getName() + "' has been deleted successfully...";
     }
+
+    @Override
+    public CategoryResponseDTO editCategory(Long id, CategoryRequestDTO categoryDTO) {
+        Category category = categoryHelper.getCategoryByIdThrow(id);
+
+        if(categoryRepository.existsByNameIgnoreCaseAndIdNot(categoryDTO.getName(), category.getId())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Category with name '" + categoryDTO.getName() + "' already exists!");
+        }
+
+        category = categoryHelper.getUpdatedCategory(category, categoryDTO);
+        category = categoryRepository.save(category);
+
+        return modelMapper.map(category,CategoryResponseDTO.class);
+    }
+
 }

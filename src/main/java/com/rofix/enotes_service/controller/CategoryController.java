@@ -2,6 +2,7 @@ package com.rofix.enotes_service.controller;
 
 import com.rofix.enotes_service.dto.request.CategoryRequestDTO;
 import com.rofix.enotes_service.dto.response.CategoryResponseDTO;
+import com.rofix.enotes_service.entity.Category;
 import com.rofix.enotes_service.response.APIResponse;
 import com.rofix.enotes_service.service.CategoryService;
 import jakarta.validation.Valid;
@@ -58,12 +59,24 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<CategoryResponseDTO>> getCategory(@Min(value = 1) @PathVariable Long id) throws Exception {
+    public ResponseEntity<APIResponse<CategoryResponseDTO>> getCategory(@Min(value = 1) @PathVariable Long id) {
         CategoryResponseDTO category = categoryService.getCategoryById(id);
 
         APIResponse<CategoryResponseDTO> categoryResponseDTO = APIResponse.<CategoryResponseDTO>builder()
                 .message("Get Category")
                 .data(category)
+                .build();
+
+        return ResponseEntity.ok(categoryResponseDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryRequestDTO categoryDTO){
+        CategoryResponseDTO updated = categoryService.editCategory(id, categoryDTO);
+
+        APIResponse<CategoryResponseDTO> categoryResponseDTO = APIResponse.<CategoryResponseDTO>builder()
+                .message("Category has been Updated")
+                .data(updated)
                 .build();
 
         return ResponseEntity.ok(categoryResponseDTO);

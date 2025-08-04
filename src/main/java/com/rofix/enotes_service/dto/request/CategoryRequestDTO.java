@@ -23,9 +23,5 @@ public class CategoryRequestDTO {
     private String description;
 
     private Boolean isActive = true;
-
-    @Min(value = 1, message = "'createdBy' must be an integer greater than or equal to 1.")
-    private Integer createdBy = 1;
-
-    private Integer updatedBy;
+    private Boolean isDeleted = false;
 }
