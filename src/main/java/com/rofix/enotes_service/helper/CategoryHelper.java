@@ -1,5 +1,6 @@
 package com.rofix.enotes_service.helper;
 
+import com.rofix.enotes_service.dto.request.CategoryRequestDTO;
 import com.rofix.enotes_service.dto.response.CategoryResponseDTO;
 import com.rofix.enotes_service.entity.Category;
 import com.rofix.enotes_service.repository.CategoryRepository;
@@ -27,5 +28,21 @@ public class CategoryHelper {
     public Category getByIdAndActiveAndNotDeletedOrThrow(Long id)
     {
         return categoryRepository.findByIdAndIsDeletedIsFalseAndIsActiveIsTrue(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "category with Id " + id + " not found" ));
+    }
+
+    public Category getCategoryByIdThrow(Long id)
+    {
+        return categoryRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "category with Id " + id + " not found" ));
+    }
+
+    public Category getUpdatedCategory(Category category, CategoryRequestDTO categoryDTO)
+    {
+        category.setName(categoryDTO.getName());
+        category.setDescription(categoryDTO.getDescription());
+        category.setIsActive(categoryDTO.getIsActive());
+        category.setUpdatedBy(1);
+        category.setIsDeleted(categoryDTO.getIsDeleted());
+
+        return category;
     }
 }
