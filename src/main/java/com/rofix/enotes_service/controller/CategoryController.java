@@ -2,15 +2,15 @@ package com.rofix.enotes_service.controller;
 
 import com.rofix.enotes_service.dto.request.CategoryRequestDTO;
 import com.rofix.enotes_service.dto.response.CategoryResponseDTO;
-import com.rofix.enotes_service.entity.Category;
 import com.rofix.enotes_service.response.APIResponse;
 import com.rofix.enotes_service.service.CategoryService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/categories", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
+@Validated
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -54,5 +55,28 @@ public class CategoryController {
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<APIResponse<CategoryResponseDTO>> getCategory(@Min(value = 1) @PathVariable Long id) throws Exception {
+        CategoryResponseDTO category = categoryService.getCategoryById(id);
+
+        APIResponse<CategoryResponseDTO> categoryResponseDTO = APIResponse.<CategoryResponseDTO>builder()
+                .message("Get Category")
+                .data(category)
+                .build();
+
+        return ResponseEntity.ok(categoryResponseDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<APIResponse<Void>> deleteCategory(@Min(value = 1) @PathVariable Long id) {
+        String status = categoryService.deleteCategoryById(id);
+
+        APIResponse<Void> categoryResponseDTO = APIResponse.<Void>builder()
+                .message(status)
+                .build();
+
+        return ResponseEntity.ok(categoryResponseDTO);
     }
 }
