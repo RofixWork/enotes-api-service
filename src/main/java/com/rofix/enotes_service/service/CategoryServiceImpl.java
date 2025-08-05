@@ -3,8 +3,6 @@ package com.rofix.enotes_service.service;
 import com.rofix.enotes_service.dto.request.CategoryRequestDTO;
 import com.rofix.enotes_service.dto.response.CategoryResponseDTO;
 import com.rofix.enotes_service.entity.Category;
-import com.rofix.enotes_service.exception.base.ConflictException;
-import com.rofix.enotes_service.exception.base.NotFoundException;
 import com.rofix.enotes_service.helper.CategoryHelper;
 import com.rofix.enotes_service.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +26,6 @@ public class CategoryServiceImpl implements CategoryService {
        categoryHelper.checkedCategory(categoryDTO.getName(), null);
 
         Category newCategory = modelMapper.map(categoryDTO, Category.class);
-        newCategory.setCreatedBy(1);
         Category savedCategory = categoryRepository.save(newCategory);
         log.info("[CategoryServiceImpl] :: [saveCategory] :: Category has been Saved Successfully...");
 

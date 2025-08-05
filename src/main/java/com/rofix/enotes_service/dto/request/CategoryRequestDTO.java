@@ -1,7 +1,7 @@
 package com.rofix.enotes_service.dto.request;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +22,8 @@ public class CategoryRequestDTO {
     @Size(min = 6, max = 1000, message = "The category description must be between 6 and 1000 characters long.")
     private String description;
 
+    @NotNull(message = "Category Active status cannot be null!!!")
     private Boolean isActive = true;
+
     private Boolean isDeleted = false;
 }

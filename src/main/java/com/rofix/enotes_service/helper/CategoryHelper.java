@@ -48,7 +48,6 @@ public class CategoryHelper {
         category.setName(categoryDTO.getName());
         category.setDescription(categoryDTO.getDescription());
         category.setIsActive(categoryDTO.getIsActive());
-        category.setUpdatedBy(1);
         category.setIsDeleted(categoryDTO.getIsDeleted());
 
         return category;
