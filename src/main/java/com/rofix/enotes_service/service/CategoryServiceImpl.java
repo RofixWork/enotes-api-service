@@ -3,13 +3,13 @@ package com.rofix.enotes_service.service;
 import com.rofix.enotes_service.dto.request.CategoryRequestDTO;
 import com.rofix.enotes_service.dto.response.CategoryResponseDTO;
 import com.rofix.enotes_service.entity.Category;
+import com.rofix.enotes_service.exception.base.ConflictException;
+import com.rofix.enotes_service.exception.base.NotFoundException;
 import com.rofix.enotes_service.helper.CategoryHelper;
 import com.rofix.enotes_service.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,10 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryDTO) {
 
-        if(categoryRepository.existsByNameIgnoreCase(categoryDTO.getName()))
-        {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Category with name '" + categoryDTO.getName() + "' already exists!");
-        }
+       categoryHelper.checkedCategory(categoryDTO.getName(), null);
 
         Category newCategory = modelMapper.map(categoryDTO, Category.class);
         newCategory.setCreatedBy(1);
@@ -66,9 +63,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponseDTO editCategory(Long id, CategoryRequestDTO categoryDTO) {
         Category category = categoryHelper.getCategoryByIdThrow(id);
 
-        if(categoryRepository.existsByNameIgnoreCaseAndIdNot(categoryDTO.getName(), category.getId())){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Category with name '" + categoryDTO.getName() + "' already exists!");
-        }
+        categoryHelper.checkedCategory(categoryDTO.getName(), id);
 
         category = categoryHelper.getUpdatedCategory(category, categoryDTO);
         category = categoryRepository.save(category);

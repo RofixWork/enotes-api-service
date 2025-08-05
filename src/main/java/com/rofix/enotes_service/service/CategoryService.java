@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface CategoryService {
     CategoryResponseDTO saveCategory(CategoryRequestDTO category);
+
     List<CategoryResponseDTO> getAllCategories();
 
     List<CategoryResponseDTO> getActiveCategories();

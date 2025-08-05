@@ -71,7 +71,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryRequestDTO categoryDTO){
+    public ResponseEntity<?> updateCategory(@Min(value = 1) @PathVariable Long id, @Valid @RequestBody CategoryRequestDTO categoryDTO){
         CategoryResponseDTO updated = categoryService.editCategory(id, categoryDTO);
 
         APIResponse<CategoryResponseDTO> categoryResponseDTO = APIResponse.<CategoryResponseDTO>builder()

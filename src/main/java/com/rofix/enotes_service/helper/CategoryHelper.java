@@ -3,17 +3,19 @@ package com.rofix.enotes_service.helper;
 import com.rofix.enotes_service.dto.request.CategoryRequestDTO;
 import com.rofix.enotes_service.dto.response.CategoryResponseDTO;
 import com.rofix.enotes_service.entity.Category;
+import com.rofix.enotes_service.exception.base.ConflictException;
+import com.rofix.enotes_service.exception.base.NotFoundException;
 import com.rofix.enotes_service.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryHelper {
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
@@ -27,12 +29,18 @@ public class CategoryHelper {
 
     public Category getByIdAndActiveAndNotDeletedOrThrow(Long id)
     {
-        return categoryRepository.findByIdAndIsDeletedIsFalseAndIsActiveIsTrue(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "category with Id " + id + " not found" ));
+        return categoryRepository.findByIdAndIsDeletedIsFalseAndIsActiveIsTrue(id).orElseThrow(() -> {
+            log.error("[CategoryHelper] :: [getByIdAndActiveAndNotDeletedOrThrow] :: category with Id [{}] not found", id);
+            return new NotFoundException("category with Id " + id + " not found" );
+        });
     }
 
     public Category getCategoryByIdThrow(Long id)
     {
-        return categoryRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "category with Id " + id + " not found" ));
+        return categoryRepository.findById(id).orElseThrow(() -> {
+            log.error("[CategoryHelper] :: [getCategoryByIdThrow] :: category with Id [{}] not found", id);
+            return new NotFoundException("category with Id " + id + " not found" );
+        });
     }
 
     public Category getUpdatedCategory(Category category, CategoryRequestDTO categoryDTO)
@@ -44,5 +52,18 @@ public class CategoryHelper {
         category.setIsDeleted(categoryDTO.getIsDeleted());
 
         return category;
+    }
+
+    public void checkedCategory(String name, Long id)
+    {
+        boolean categoryExist = id == null ?
+                categoryRepository.existsByNameIgnoreCase(name)
+                : categoryRepository.existsByNameIgnoreCaseAndIdNot(name, id);
+
+        if(categoryExist)
+        {
+            log.error("[CategoryHelper] :: [checkedCategory] :: Category with name [{}] already exists!", name);
+            throw new ConflictException("Category with name '" + name + "' already exists!");
+        }
     }
 }
