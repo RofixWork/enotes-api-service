@@ -48,8 +48,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDTO getCategoryById(Long id) {
+        Category category = categoryHelper.getByIdAndActiveAndNotDeletedOrThrow(id);
         log.info("[CategoryServiceImpl] :: [getCategoryById] :: Get Category with Id: [{}]", id);
-        return modelMapper.map(categoryHelper.getByIdAndActiveAndNotDeletedOrThrow(id), CategoryResponseDTO.class);
+        return modelMapper.map(category, CategoryResponseDTO.class);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setIsDeleted(true);
         categoryRepository.save(category);
 
-        log.info("[CategoryServiceImpl] :: [getCategoryById] :: Category with name [{}] has been deleted successfully...", id);
+        log.info("Category with id [{}] and name [{}] has been deleted successfully...", id, category.getName());
         return "Category with name '" + category.getName() + "' has been deleted successfully...";
     }
 
