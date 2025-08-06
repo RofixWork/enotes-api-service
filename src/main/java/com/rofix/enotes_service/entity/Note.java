@@ -4,11 +4,9 @@ import com.rofix.enotes_service.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 
 @Entity
-@Table(name = "categories")
+@Table(name = "Notes")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,20 +14,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper=true)
 @SuperBuilder
-public class Category extends BaseEntity {
+public class Note extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50, unique = true)
-    private String name;
+    @Column(nullable = false, length = 1000)
+    private String title;
 
-    @Column(length = 1000, nullable = false)
+    @Column(nullable = false)
     private String description;
 
-    @Builder.Default
-    private Boolean isActive = true;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
-    @Builder.Default
-    private Boolean isDeleted = false;
+//    private Integer file_id;
 }

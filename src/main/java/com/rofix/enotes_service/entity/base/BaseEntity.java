@@ -26,12 +26,6 @@ import java.time.LocalDate;
 @SuperBuilder
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
-    @Builder.Default
-    private Boolean isActive = true;
-
-    @Builder.Default
-    private Boolean isDeleted = false;
-
     @CreatedBy
     @Column(updatable = false)
     private Integer createdBy;
