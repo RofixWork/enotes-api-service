@@ -2,8 +2,7 @@ package com.rofix.enotes_service.controller;
 
 import com.rofix.enotes_service.dto.request.CategoryRequestDTO;
 import com.rofix.enotes_service.dto.response.CategoryResponseDTO;
-import com.rofix.enotes_service.entity.Category;
-import com.rofix.enotes_service.response.APIResponse;
+import com.rofix.enotes_service.utils.ResponseUtils;
 import com.rofix.enotes_service.service.CategoryService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -24,72 +23,40 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<APIResponse<CategoryResponseDTO>> createCategory(@Valid @RequestBody CategoryRequestDTO category){
+    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryRequestDTO category){
         CategoryResponseDTO savedCategory = categoryService.saveCategory(category);
-        APIResponse<CategoryResponseDTO> response = APIResponse.<CategoryResponseDTO>builder()
-                .message("Category created successfully")
-                .data(savedCategory)
-                .build();
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseUtils.createSuccessResponse(HttpStatus.CREATED, "Category created successfully", savedCategory);
     }
 
     @GetMapping
-    public ResponseEntity<APIResponse<List<CategoryResponseDTO>>> getAllCategories(){
+    public ResponseEntity<?> getAllCategories(){
         List<CategoryResponseDTO> categories =  categoryService.getAllCategories();
-
-        APIResponse<List<CategoryResponseDTO>> response = APIResponse.<List<CategoryResponseDTO>>builder()
-                .message("Get All Categories")
-                .data(categories)
-                .build();
-
-        return ResponseEntity.ok(response);
+        return ResponseUtils.createSuccessResponse("Get All Categories", categories);
     }
 
     @GetMapping("/active")
-    public ResponseEntity<APIResponse<List<CategoryResponseDTO>>> getActiveCategories(){
-        List<CategoryResponseDTO> categories =  categoryService.getActiveCategories();
-
-        APIResponse<List<CategoryResponseDTO>> response = APIResponse.<List<CategoryResponseDTO>>builder()
-                .message("Get Active Categories")
-                .data(categories)
-                .build();
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> getActiveCategories(){
+        List<CategoryResponseDTO> activeCategories =  categoryService.getActiveCategories();
+        return ResponseUtils.createSuccessResponse("Get Active Categories", activeCategories);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<CategoryResponseDTO>> getCategory(@Min(value = 1) @PathVariable Long id) {
+    public ResponseEntity<?> getCategory(@Min(value = 1) @PathVariable Long id) {
         CategoryResponseDTO category = categoryService.getCategoryById(id);
-
-        APIResponse<CategoryResponseDTO> categoryResponseDTO = APIResponse.<CategoryResponseDTO>builder()
-                .message("Get Category")
-                .data(category)
-                .build();
-
-        return ResponseEntity.ok(categoryResponseDTO);
+        return ResponseUtils.createSuccessResponse("Get Category", category);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCategory(@Min(value = 1) @PathVariable Long id, @Valid @RequestBody CategoryRequestDTO categoryDTO){
         CategoryResponseDTO updated = categoryService.editCategory(id, categoryDTO);
 
-        APIResponse<CategoryResponseDTO> categoryResponseDTO = APIResponse.<CategoryResponseDTO>builder()
-                .message("Category has been Updated")
-                .data(updated)
-                .build();
-
-        return ResponseEntity.ok(categoryResponseDTO);
+        return ResponseUtils.createSuccessResponse("Category has been Updated", updated);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<APIResponse<Void>> deleteCategory(@Min(value = 1) @PathVariable Long id) {
+    public ResponseEntity<?> deleteCategory(@Min(value = 1) @PathVariable Long id) {
         String status = categoryService.deleteCategoryById(id);
 
-        APIResponse<Void> categoryResponseDTO = APIResponse.<Void>builder()
-                .message(status)
-                .build();
-
-        return ResponseEntity.ok(categoryResponseDTO);
+        return ResponseUtils.createSuccessResponse(status);
     }
 }
