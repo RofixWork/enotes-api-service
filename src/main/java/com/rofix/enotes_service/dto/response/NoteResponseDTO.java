@@ -31,6 +31,7 @@ public class NoteResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class FileDTO {
+        private Long id;
         @JsonProperty("displayName")
         private String displayFileName;
 

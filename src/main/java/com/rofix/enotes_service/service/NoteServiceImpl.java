@@ -18,8 +18,12 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.event.Level;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -67,6 +71,12 @@ public class NoteServiceImpl implements NoteService {
         return notes.stream()
                 .map(note -> modelMapper.map(note, NoteResponseDTO.class))
                 .toList();
+    }
+
+    @Override
+    public byte[] downloadFile(FileDetails fileDetails) throws IOException {
+        var inputStream = new FileInputStream(fileDetails.getPath());
+        return StreamUtils.copyToByteArray(inputStream);
     }
 }
 

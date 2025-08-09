@@ -13,6 +13,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +88,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public  ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex){
         LoggerUtils.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleHttpMessageNotReadableException", ex.getMessage());
+        return ResponseUtils.createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<?> handleFileNotFoundException(FileNotFoundException ex){
+        LoggerUtils.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleFileNotFoundException", ex.getMessage());
+        return ResponseUtils.createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<?> handleFileNotFoundException(IOException ex){
+        LoggerUtils.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleFileNotFoundException", ex.getMessage());
         return ResponseUtils.createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 }

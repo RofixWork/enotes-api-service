@@ -2,6 +2,7 @@ package com.rofix.enotes_service.helper;
 
 import com.rofix.enotes_service.entity.FileDetails;
 import com.rofix.enotes_service.exception.base.BadRequestException;
+import com.rofix.enotes_service.exception.base.NotFoundException;
 import com.rofix.enotes_service.repository.FileDetailsRepository;
 import com.rofix.enotes_service.service.NoteServiceImpl;
 import com.rofix.enotes_service.utils.LoggerUtils;
@@ -60,8 +61,16 @@ public class NoteHelper {
         return fileDetailsRepository.save(fileDetails);
     }
 
+    public FileDetails getFileDetailsOrThrow(Long id)
+    {
+        return fileDetailsRepository.findById(id).orElseThrow(() -> {
+            LoggerUtils.createLog(Level.ERROR, NoteServiceImpl.class.getName(), "getFileDetailsOrThrow", "File not found with id: {}", id);
+            return new NotFoundException("File not found with id " + id);
+        });
+    }
+
     private void checkFileExtension(MultipartFile file) {
-        List<String> extensionAllow = List.of("pdf", "xlsx", "jpg", "png");
+        List<String> extensionAllow = List.of("pdf", "xlsx", "jpg", "png", "docx");
 
         if(!extensionAllow.contains(FilenameUtils.getExtension(file.getOriginalFilename()))) {
             LoggerUtils.createLog(Level.WARN, NoteHelper.class.getName(), "saveFileDetails", "Invalid file format!!! Upload only {}", extensionAllow);
@@ -79,5 +88,18 @@ public class NoteHelper {
         }
 
         return fileName + "." + extension;
+    }
+
+    public String getContentType(String fileName) {
+        String extension = FilenameUtils.getExtension(fileName);
+//        "pdf", "xlsx", "jpg", "png", "docx"
+        return switch (extension) {
+            case "pdf" -> "application/pdf";
+            case "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            case "jpg" -> "image/jpeg";
+            case "png" -> "image/png";
+            case "docx" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            default -> "application/octet-stream";
+        };
     }
 }
