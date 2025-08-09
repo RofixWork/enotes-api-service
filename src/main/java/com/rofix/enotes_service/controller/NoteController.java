@@ -21,14 +21,7 @@ import java.util.List;
 public class NoteController {
     private final NoteService noteService;
 
-//    @PostMapping
-//    public ResponseEntity<?> createNote(@Valid @RequestBody NoteRequestDTO noteRequestDTO) {
-//        NoteResponseDTO noteResponseDTO = noteService.createNote(noteRequestDTO);
-//
-//        return ResponseUtils.createSuccessResponse("Note created", noteResponseDTO);
-//    }
-
-        @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createNote(
                 @RequestParam(name = "note")String note,
                 @RequestParam(name = "file", required = false)MultipartFile file
