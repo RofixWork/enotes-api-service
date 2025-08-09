@@ -43,15 +43,7 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public NoteResponseDTO createNote(String noteRequest, MultipartFile file) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        NoteRequestDTO noteRequestDTO = objectMapper.readValue(noteRequest, NoteRequestDTO.class);
-
-        Set<ConstraintViolation<NoteRequestDTO>> violations = validatorHandler.validate(noteRequestDTO);
-
-        if(!violations.isEmpty())
-        {
-            throw new CustomValidationException(violations);
-        }
+        NoteRequestDTO noteRequestDTO = noteHelper.getNoteRequestDTO(noteRequest);
 
         Category category = categoryHelper.getByIdAndActiveAndNotDeletedOrThrow(noteRequestDTO.getCategoryId());
 
@@ -68,7 +60,7 @@ public class NoteServiceImpl implements NoteService {
         LoggerUtils.createLog(Level.INFO, NoteServiceImpl.class.getName(), "createNote", "Note created successfully");
         return modelMapper.map(savedNote, NoteResponseDTO.class);
     }
-    
+
     @Override
     public List<NoteResponseDTO> getAllNotes() {
         List<Note> notes = noteRepository.findAll();
@@ -105,6 +97,23 @@ public class NoteServiceImpl implements NoteService {
                 .isLast(notePage.isLast())
                 .isFirst(notePage.isFirst())
                 .build();
+    }
+
+    @Override
+    public NoteResponseDTO updateNote(Long id, String note, MultipartFile file) throws JsonProcessingException {
+        Note currentNote = noteHelper.getNoteOrThrow(id);
+        NoteRequestDTO noteRequestDTO = noteHelper.getNoteRequestDTO(note);
+        Category category = categoryHelper.getByIdAndActiveAndNotDeletedOrThrow(noteRequestDTO.getCategoryId());
+        FileDetails fileDetails = file != null && !file.isEmpty() ? noteHelper.saveFileDetails(file) : currentNote.getFileDetails();
+
+        //update
+        currentNote.setTitle(noteRequestDTO.getTitle());
+        currentNote.setDescription(noteRequestDTO.getDescription());
+        currentNote.setCategory(category);
+        currentNote.setFileDetails(fileDetails);
+        Note updatedNote = noteRepository.save(currentNote);
+
+        return modelMapper.map(updatedNote, NoteResponseDTO.class);
     }
 }
 

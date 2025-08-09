@@ -1,11 +1,19 @@
 package com.rofix.enotes_service.helper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rofix.enotes_service.dto.request.NoteRequestDTO;
 import com.rofix.enotes_service.entity.FileDetails;
+import com.rofix.enotes_service.entity.Note;
 import com.rofix.enotes_service.exception.base.BadRequestException;
+import com.rofix.enotes_service.exception.base.CustomValidationException;
 import com.rofix.enotes_service.exception.base.NotFoundException;
 import com.rofix.enotes_service.repository.FileDetailsRepository;
+import com.rofix.enotes_service.repository.NoteRepository;
 import com.rofix.enotes_service.service.NoteServiceImpl;
 import com.rofix.enotes_service.utils.LoggerUtils;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.event.Level;
@@ -18,12 +26,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class NoteHelper {
     private final FileDetailsRepository fileDetailsRepository;
+    private final NoteRepository noteRepository;
+    private final Validator validatorHandler;
     @Value("${file.upload.path}")
     private String uploadFilePath;
     
@@ -69,6 +80,14 @@ public class NoteHelper {
         });
     }
 
+    public Note getNoteOrThrow(Long id)
+    {
+        return noteRepository.findById(id).orElseThrow(() -> {
+            LoggerUtils.createLog(Level.ERROR, NoteServiceImpl.class.getName(), "getNoteOrThrow", "Note not found with id: {}", id);
+            return new NotFoundException("Note not found with id " + id);
+        });
+    }
+
     private void checkFileExtension(MultipartFile file) {
         List<String> extensionAllow = List.of("pdf", "xlsx", "jpg", "png", "docx");
 
@@ -101,5 +120,18 @@ public class NoteHelper {
             case "docx" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             default -> "application/octet-stream";
         };
+    }
+
+    public NoteRequestDTO getNoteRequestDTO(String noteRequest) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        NoteRequestDTO noteRequestDTO = objectMapper.readValue(noteRequest, NoteRequestDTO.class);
+
+        Set<ConstraintViolation<NoteRequestDTO>> violations = validatorHandler.validate(noteRequestDTO);
+
+        if(!violations.isEmpty())
+        {
+            throw new CustomValidationException(violations);
+        }
+        return noteRequestDTO;
     }
 }

@@ -10,6 +10,7 @@ import com.rofix.enotes_service.utils.ResponseUtils;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,13 +32,24 @@ public class NoteController {
                 @RequestParam(name = "file", required = false)MultipartFile file
                 ) throws JsonProcessingException {
         NoteResponseDTO noteResponseDTO = noteService.createNote(note, file);
-        return ResponseUtils.createSuccessResponse("Note created", noteResponseDTO);
+        return ResponseUtils.createSuccessResponse(HttpStatus.CREATED,"Note created", noteResponseDTO);
     }
 
     @GetMapping
     public ResponseEntity<?> getNotes() {
         List<NoteResponseDTO> notes = noteService.getAllNotes();
         return ResponseUtils.createSuccessResponse("All Notes", notes);
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateNote(
+            @Min(value = 1) @PathVariable Long id,
+            @RequestParam(name = "note") String note,
+            @RequestParam(name = "file", required = false)MultipartFile file
+    ) throws JsonProcessingException {
+        NoteResponseDTO noteResponseDTO = noteService.updateNote(id, note, file);
+
+        return ResponseUtils.createSuccessResponse("Note updated", noteResponseDTO);
     }
 
     @GetMapping("/user")
