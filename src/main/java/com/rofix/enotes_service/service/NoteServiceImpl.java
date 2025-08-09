@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rofix.enotes_service.dto.request.NoteRequestDTO;
 import com.rofix.enotes_service.dto.response.NoteResponseDTO;
+import com.rofix.enotes_service.dto.response.PageResponseDTO;
 import com.rofix.enotes_service.entity.Category;
 import com.rofix.enotes_service.entity.FileDetails;
 import com.rofix.enotes_service.entity.Note;
@@ -17,6 +18,9 @@ import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.event.Level;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,6 +81,30 @@ public class NoteServiceImpl implements NoteService {
     public byte[] downloadFile(FileDetails fileDetails) throws IOException {
         var inputStream = new FileInputStream(fileDetails.getPath());
         return StreamUtils.copyToByteArray(inputStream);
+    }
+
+    @Override
+    public PageResponseDTO getUserNotes(Integer userId, Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber-1, pageSize);
+        Page<Note> notePage = noteRepository.findAllByCreatedBy(userId, pageable);
+
+        if(notePage.isEmpty())
+            return PageResponseDTO.builder().build();
+
+        List<NoteResponseDTO> noteResponseDTOS = notePage.get()
+                .map(note -> modelMapper.map(note, NoteResponseDTO.class))
+                .toList();
+
+        return PageResponseDTO.builder()
+                .content(noteResponseDTOS)
+                .pageNumber(1)
+                .pageSize(5)
+                .totalPages(notePage.getTotalPages())
+                .totalElements(notePage.getTotalElements())
+                .pageSize(notePage.getSize())
+                .isLast(notePage.isLast())
+                .isFirst(notePage.isFirst())
+                .build();
     }
 }
 
