@@ -29,5 +29,7 @@ public class Note extends BaseEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-//    private Integer file_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "file_id")
+    private FileDetails fileDetails;
 }

@@ -1,10 +1,8 @@
 package com.rofix.enotes_service.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.rofix.enotes_service.entity.Category;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-
-import java.time.Instant;
 
 @Getter
 @Setter
@@ -17,11 +15,8 @@ public class NoteResponseDTO {
     private String title;
     private String description;
     private CategoryDTO category;
-    private Integer createdBy;
-    private Integer updatedBy;
-    private Instant createdOn;
-    private Instant updatedOn;
-    
+    private FileDTO file;
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -29,6 +24,18 @@ public class NoteResponseDTO {
     public static class CategoryDTO {
         private Long id;
         private String name;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FileDTO {
+        @JsonProperty("displayName")
+        private String displayFileName;
+
+        @JsonProperty("originalName")
+        private String originalFileName;
     }
 
 }

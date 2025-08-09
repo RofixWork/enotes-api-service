@@ -1,5 +1,6 @@
 package com.rofix.enotes_service.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.rofix.enotes_service.dto.request.NoteRequestDTO;
 import com.rofix.enotes_service.dto.response.NoteResponseDTO;
 import com.rofix.enotes_service.entity.Note;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,9 +21,19 @@ import java.util.List;
 public class NoteController {
     private final NoteService noteService;
 
-    @PostMapping
-    public ResponseEntity<?> createNote(@Valid @RequestBody NoteRequestDTO noteRequestDTO) {
-        NoteResponseDTO noteResponseDTO = noteService.createNote(noteRequestDTO);
+//    @PostMapping
+//    public ResponseEntity<?> createNote(@Valid @RequestBody NoteRequestDTO noteRequestDTO) {
+//        NoteResponseDTO noteResponseDTO = noteService.createNote(noteRequestDTO);
+//
+//        return ResponseUtils.createSuccessResponse("Note created", noteResponseDTO);
+//    }
+
+        @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createNote(
+                @RequestParam(name = "note")String note,
+                @RequestParam(name = "file", required = false)MultipartFile file
+                ) throws JsonProcessingException {
+        NoteResponseDTO noteResponseDTO = noteService.createNote(note, file);
 
         return ResponseUtils.createSuccessResponse("Note created", noteResponseDTO);
     }

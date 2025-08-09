@@ -7,6 +7,7 @@ import com.rofix.enotes_service.exception.GlobalExceptionHandler;
 import com.rofix.enotes_service.exception.base.ConflictException;
 import com.rofix.enotes_service.exception.base.NotFoundException;
 import com.rofix.enotes_service.repository.CategoryRepository;
+import com.rofix.enotes_service.utils.LoggerUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -20,7 +21,6 @@ import java.util.List;
 public class CategoryHelper {
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
-    private final LoggerHelper loggerHelper;
 
     public List<CategoryResponseDTO> getCategoryResponseDTO(List<Category> categoryList)
     {
@@ -32,7 +32,7 @@ public class CategoryHelper {
     public Category getByIdAndActiveAndNotDeletedOrThrow(Long id)
     {
         return categoryRepository.findByIdAndIsDeletedIsFalseAndIsActiveIsTrue(id).orElseThrow(() -> {
-            loggerHelper.createLog(Level.ERROR, CategoryHelper.class.getName(), "getByIdAndActiveAndNotDeletedOrThrow", "category with Id [{}] not found!!!", id);
+            LoggerUtils.createLog(Level.ERROR, CategoryHelper.class.getName(), "getByIdAndActiveAndNotDeletedOrThrow", "category with Id [{}] not found!!!", id);
             return new NotFoundException("category with Id " + id + " not found" );
         });
     }
@@ -40,7 +40,7 @@ public class CategoryHelper {
     public Category getCategoryByIdThrow(Long id)
     {
         return categoryRepository.findById(id).orElseThrow(() -> {
-            loggerHelper.createLog(Level.ERROR, CategoryHelper.class.getName(), "getCategoryByIdThrow", "category with Id [{}] not found!!!", id);
+            LoggerUtils.createLog(Level.ERROR, CategoryHelper.class.getName(), "getCategoryByIdThrow", "category with Id [{}] not found!!!", id);
             return new NotFoundException("category with Id " + id + " not found" );
         });
     }
@@ -63,8 +63,7 @@ public class CategoryHelper {
 
         if(categoryExist)
         {
-            loggerHelper.createLog(Level.ERROR, CategoryHelper.class.getName(), "checkedCategory", "Category with name [{}] already exists!!!", name);
-            loggerHelper.createLog(Level.ERROR, CategoryHelper.class.getName(), "", "", name);
+            LoggerUtils.createLog(Level.ERROR, CategoryHelper.class.getName(), "checkedCategory", "Category with name [{}] already exists!!!", name);
             throw new ConflictException("Category with name '" + name + "' already exists!");
         }
     }

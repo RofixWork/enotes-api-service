@@ -1,10 +1,7 @@
 package com.rofix.enotes_service.exception;
 
-import com.rofix.enotes_service.exception.base.BadRequestException;
-import com.rofix.enotes_service.exception.base.ConflictException;
-import com.rofix.enotes_service.exception.base.NotFoundException;
-import com.rofix.enotes_service.exception.base.UnauthorizedException;
-import com.rofix.enotes_service.helper.LoggerHelper;
+import com.rofix.enotes_service.exception.base.*;
+import com.rofix.enotes_service.utils.LoggerUtils;
 import com.rofix.enotes_service.utils.ResponseUtils;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.event.Level;
@@ -21,11 +18,7 @@ import java.util.List;
 import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    private final LoggerHelper loggerHelper;
 
-    public GlobalExceptionHandler(LoggerHelper loggerHelper) {
-        this.loggerHelper = loggerHelper;
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
@@ -40,43 +33,59 @@ public class GlobalExceptionHandler {
 
         Map<String, Object> response = new HashMap<>(Map.of("errors", errors));
 
-        loggerHelper.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleMethodArgumentNotValidException", ex.getMessage());
+        LoggerUtils.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleMethodArgumentNotValidException", ex.getMessage());
         return ResponseUtils.createErrorResponse(HttpStatus.BAD_REQUEST, response);
+    }
+
+    @ExceptionHandler(CustomValidationException.class)
+    public ResponseEntity<?> handleCustomValidationException(CustomValidationException ex) {
+        var violations = ex.getConstraintViolation();
+        List<Map<String, String>> errors =  violations.stream().map(violation -> {
+            Map<String, String> error = new HashMap<>();
+
+            error.put("field", violation.getPropertyPath().toString());
+            error.put("message", violation.getMessage());
+
+            return error;
+        }).toList();
+
+        LoggerUtils.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleCustomValidationException", ex.getMessage());
+        return ResponseUtils.createSuccessResponse(ex.getStatus(), ex.getMessage(), Map.of("errors", errors));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException ex) {
-        loggerHelper.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleConstraintViolationException", ex.getMessage());
+        LoggerUtils.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleConstraintViolationException", ex.getMessage());
         return ResponseUtils.createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> handleNotFoundException(NotFoundException ex){
-        loggerHelper.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleNotFoundException", ex.getMessage());
+        LoggerUtils.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleNotFoundException", ex.getMessage());
         return ResponseUtils.createErrorResponse(ex.getStatus(), ex.getMessage());
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<?> handleBadRequestException(BadRequestException ex){
-        loggerHelper.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleBadRequestException", ex.getMessage());
+        LoggerUtils.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleBadRequestException", ex.getMessage());
         return ResponseUtils.createErrorResponse(ex.getStatus(), ex.getMessage());
     }
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<?> handleConflictException(ConflictException ex){
-        loggerHelper.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleConflictException", ex.getMessage());
+        LoggerUtils.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleConflictException", ex.getMessage());
         return ResponseUtils.createErrorResponse(ex.getStatus(), ex.getMessage());
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<?> handleUnauthorizedException(UnauthorizedException ex){
-        loggerHelper.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleUnauthorizedException", ex.getMessage());
+        LoggerUtils.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleUnauthorizedException", ex.getMessage());
         return ResponseUtils.createErrorResponse(ex.getStatus(), ex.getMessage());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public  ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex){
-        loggerHelper.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleHttpMessageNotReadableException", ex.getMessage());
+        LoggerUtils.createLog(Level.ERROR, GlobalExceptionHandler.class.getName(), "handleHttpMessageNotReadableException", ex.getMessage());
         return ResponseUtils.createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 }
