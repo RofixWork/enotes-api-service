@@ -79,4 +79,30 @@ public class NoteController {
 
         return ResponseEntity.ok().headers(headers).body(downloadFile);
     }
+
+    @GetMapping("restore/{id}")
+    public ResponseEntity<?> restoreDeletedNote(
+            @Min(value = 1) @PathVariable Long id
+    ){
+        NoteResponseDTO restoredNote = noteService.restoreDeleteNote(id);
+
+        return ResponseUtils.createSuccessResponse("Restore Deleted Note", restoredNote);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> softDeleteNote(
+            @Min(value = 1) @PathVariable Long id
+    ){
+        String status = noteService.softDeleteNote(id);
+
+        return ResponseUtils.createSuccessResponse(status);
+    }
+
+    @GetMapping("/user/recycle-bin")
+    public ResponseEntity<?> getUserRecycleBin() {
+        Integer userId = 1;
+        List<NoteResponseDTO> noteResponseDTOS = noteService.getUserRecycleBin(userId);
+
+        return ResponseUtils.createSuccessResponse("Get Recycle Bin Note", noteResponseDTOS);
+    }
 }

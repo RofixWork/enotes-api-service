@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "Notes")
 @Getter
@@ -32,4 +34,9 @@ public class Note extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
     private FileDetails fileDetails;
+
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    private Instant deletedOn;
 }

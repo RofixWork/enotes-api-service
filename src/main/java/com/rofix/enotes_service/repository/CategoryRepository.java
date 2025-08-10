@@ -13,8 +13,6 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
 
     Optional<Category> findByIdAndIsDeletedIsFalseAndIsActiveIsTrue(Long id);
 
-    Optional<Category> findByIdAndIsDeletedIsFalse(Long id);
-
     boolean existsByNameIgnoreCase(String name);
 
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);

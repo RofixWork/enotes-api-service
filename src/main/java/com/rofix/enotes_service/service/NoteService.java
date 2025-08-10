@@ -24,4 +24,10 @@ public interface NoteService {
 
 
     NoteResponseDTO updateNote(Long id, String note, MultipartFile file) throws JsonProcessingException;
+
+    String softDeleteNote(Long id);
+
+    NoteResponseDTO restoreDeleteNote(@Min(value = 1) Long id);
+
+    List<NoteResponseDTO> getUserRecycleBin(Integer userId);
 }
