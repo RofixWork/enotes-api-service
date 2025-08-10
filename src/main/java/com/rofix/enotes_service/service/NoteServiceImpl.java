@@ -1,20 +1,16 @@
 package com.rofix.enotes_service.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rofix.enotes_service.dto.request.NoteRequestDTO;
 import com.rofix.enotes_service.dto.response.NoteResponseDTO;
 import com.rofix.enotes_service.dto.response.PageResponseDTO;
 import com.rofix.enotes_service.entity.Category;
 import com.rofix.enotes_service.entity.FileDetails;
 import com.rofix.enotes_service.entity.Note;
-import com.rofix.enotes_service.exception.base.CustomValidationException;
 import com.rofix.enotes_service.helper.CategoryHelper;
 import com.rofix.enotes_service.helper.NoteHelper;
 import com.rofix.enotes_service.repository.NoteRepository;
 import com.rofix.enotes_service.utils.LoggerUtils;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.event.Level;
@@ -26,10 +22,8 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +31,6 @@ public class NoteServiceImpl implements NoteService {
     private final ModelMapper modelMapper;
     private final NoteRepository noteRepository;
     private final CategoryHelper categoryHelper;
-    private final Validator validatorHandler;
     private final NoteHelper noteHelper;
 
 
@@ -104,7 +97,8 @@ public class NoteServiceImpl implements NoteService {
         Note currentNote = noteHelper.getNoteOrThrow(id);
         NoteRequestDTO noteRequestDTO = noteHelper.getNoteRequestDTO(note);
         Category category = categoryHelper.getByIdAndActiveAndNotDeletedOrThrow(noteRequestDTO.getCategoryId());
-        FileDetails fileDetails = file != null && !file.isEmpty() ? noteHelper.saveFileDetails(file) : currentNote.getFileDetails();
+        FileDetails fileDetails = file != null && !file.isEmpty() ?
+                noteHelper.saveFileDetails(file) : currentNote.getFileDetails();
 
         //update
         currentNote.setTitle(noteRequestDTO.getTitle());

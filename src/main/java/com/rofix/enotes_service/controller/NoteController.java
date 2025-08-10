@@ -1,6 +1,7 @@
 package com.rofix.enotes_service.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.rofix.enotes_service.config.AppConstants;
 import com.rofix.enotes_service.dto.response.NoteResponseDTO;
 import com.rofix.enotes_service.dto.response.PageResponseDTO;
 import com.rofix.enotes_service.entity.FileDetails;
@@ -54,8 +55,8 @@ public class NoteController {
 
     @GetMapping("/user")
     public ResponseEntity<?> getUserNotes(
-           @RequestParam(name = "pageNumber", defaultValue = "1", required = false) Integer pageNumber,
-           @RequestParam(name = "pageSize", defaultValue = "5", required = false) Integer pageSize
+           @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+           @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
     ) {
         Integer userId = 1;
 
