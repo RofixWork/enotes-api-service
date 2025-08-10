@@ -30,4 +30,6 @@ public interface NoteService {
     NoteResponseDTO restoreDeleteNote(@Min(value = 1) Long id);
 
     List<NoteResponseDTO> getUserRecycleBin(Integer userId);
+
+    String userClearRecycleBin(Integer userId);
 }

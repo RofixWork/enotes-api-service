@@ -153,5 +153,17 @@ public class NoteServiceImpl implements NoteService {
 
         return notes.stream().map(note -> modelMapper.map(note, NoteResponseDTO.class)).toList();
     }
+
+    @Override
+    public String userClearRecycleBin(Integer userId) {
+        List<Note> notes = noteRepository.findAllByCreatedByAndIsDeletedIsTrue(userId);
+
+        if(notes == null || notes.isEmpty())
+        {
+            throw new BadRequestException("You dont have any notes in the Recycle Bin!!!");
+        }
+        noteRepository.deleteAll(notes);
+        return "Recycle Bin has been clear successfully...";
+    }
 }
 

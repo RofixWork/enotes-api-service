@@ -105,4 +105,12 @@ public class NoteController {
 
         return ResponseUtils.createSuccessResponse("Get Recycle Bin Note", noteResponseDTOS);
     }
+
+    @DeleteMapping("/user/clear/recycle-bin")
+    public ResponseEntity<?> userClearRecycleBin() {
+        Integer userId = 1;
+        String status = noteService.userClearRecycleBin(userId);
+
+        return ResponseUtils.createSuccessResponse(status);
+    }
 }
