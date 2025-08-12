@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -164,6 +163,19 @@ public class NoteServiceImpl implements NoteService {
         }
         noteRepository.deleteAll(notes);
         return "Recycle Bin has been clear successfully...";
+    }
+
+    @Override
+    public void copyNote(Long noteId) {
+        Note note = noteHelper.getNoteNotDeletedOrThrow(noteId);
+
+        //TODO: CHECK USER VALIDATIONS
+        Note copiedNote = Note.builder()
+                .title(note.getTitle())
+                .description(note.getDescription())
+                .category(note.getCategory())
+                .build();
+        noteRepository.save(copiedNote);
     }
 }
 

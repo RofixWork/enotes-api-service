@@ -1,15 +1,12 @@
 package com.rofix.enotes_service.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.rofix.enotes_service.dto.request.NoteRequestDTO;
 import com.rofix.enotes_service.dto.response.NoteResponseDTO;
 import com.rofix.enotes_service.dto.response.PageResponseDTO;
 import com.rofix.enotes_service.entity.FileDetails;
-import com.rofix.enotes_service.entity.Note;
 import jakarta.validation.constraints.Min;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,9 +24,11 @@ public interface NoteService {
 
     String softDeleteNote(Long id);
 
-    NoteResponseDTO restoreDeleteNote(@Min(value = 1) Long id);
+    NoteResponseDTO restoreDeleteNote(Long id);
 
     List<NoteResponseDTO> getUserRecycleBin(Integer userId);
 
     String userClearRecycleBin(Integer userId);
+
+    void copyNote(Long noteId);
 }

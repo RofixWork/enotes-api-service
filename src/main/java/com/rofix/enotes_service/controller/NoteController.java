@@ -113,4 +113,13 @@ public class NoteController {
 
         return ResponseUtils.createSuccessResponse(status);
     }
+
+    @GetMapping("/{id}/copy")
+    public ResponseEntity<?> copyNote(
+            @Min(value = 1) @PathVariable("id") Long noteId
+    ) {
+        noteService.copyNote(noteId);
+
+        return ResponseUtils.createSuccessResponse("Note has been Copied Successfully.");
+    }
 }
