@@ -17,4 +17,6 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
     List<Note> findAllByCreatedByAndIsDeletedIsTrue(Integer createdBy);
 
     List<Note> findAllByIsDeletedIsTrueAndDeletedOnBefore(Instant deletedOn);
+
+    Optional<Note> findByIdAndIsDeletedIsFalse(Long id);
 }

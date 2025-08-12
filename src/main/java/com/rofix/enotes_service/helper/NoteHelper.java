@@ -88,6 +88,14 @@ public class NoteHelper {
         });
     }
 
+    public Note getNoteNotDeletedOrThrow(Long id)
+    {
+        return noteRepository.findByIdAndIsDeletedIsFalse(id).orElseThrow(() -> {
+            LoggerUtils.createLog(Level.ERROR, NoteServiceImpl.class.getName(), "getNoteNotDeletedOrThrow", "Note not found with id: {}", id);
+            return new NotFoundException("Note not found with id " + id);
+        });
+    }
+
 
     private void checkFileExtension(MultipartFile file) {
         List<String> extensionAllow = List.of("pdf", "xlsx", "jpg", "png", "docx");

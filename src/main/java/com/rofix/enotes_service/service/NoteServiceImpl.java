@@ -158,7 +158,7 @@ public class NoteServiceImpl implements NoteService {
     public String userClearRecycleBin(Integer userId) {
         List<Note> notes = noteRepository.findAllByCreatedByAndIsDeletedIsTrue(userId);
 
-        if(notes == null || notes.isEmpty())
+        if(notes.isEmpty())
         {
             throw new BadRequestException("You dont have any notes in the Recycle Bin!!!");
         }
