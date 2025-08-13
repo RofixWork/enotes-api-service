@@ -4,6 +4,7 @@ import com.rofix.enotes_service.dto.response.FavouriteNoteResponseDTO;
 import com.rofix.enotes_service.entity.FavouriteNote;
 import com.rofix.enotes_service.entity.Note;
 import com.rofix.enotes_service.exception.base.BadRequestException;
+import com.rofix.enotes_service.exception.base.ConflictException;
 import com.rofix.enotes_service.helper.FavouriteNoteHelper;
 import com.rofix.enotes_service.helper.NoteHelper;
 import com.rofix.enotes_service.repository.FavouriteNoteRepository;
@@ -34,7 +35,7 @@ public class FavouriteNoteServiceImpl implements FavouriteNoteService {
         {
             LoggerUtils.createLog(Level.WARN, getClass().getName(), "addNoteToFavourite",
                     String.format("Note %d already exists in the favourites for user %d", noteId, userId));
-            throw new BadRequestException("This note is already in your favourites");
+            throw new ConflictException("This note is already in your favourites");
         }
 
         FavouriteNote favouriteNote = FavouriteNote.builder()
