@@ -4,4 +4,6 @@ import com.rofix.enotes_service.dto.request.RegisterUserDTO;
 
 public interface AuthService {
     String register(RegisterUserDTO registerUserDTO);
+
+    String verifyUserAccount(Long userId, String verificationCode);
 }

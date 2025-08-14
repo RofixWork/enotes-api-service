@@ -48,4 +48,8 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id", nullable = false)
     )
     Set<Role> roles = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "status_id", nullable = false)
+    private AccountStatus status;
 }
