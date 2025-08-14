@@ -1,5 +1,7 @@
 package com.rofix.enotes_service.service;
 
+import com.rofix.enotes_service.config.AppConstants;
+import com.rofix.enotes_service.dto.request.EmailDetailsDTO;
 import com.rofix.enotes_service.dto.request.RegisterUserDTO;
 import com.rofix.enotes_service.entity.Role;
 import com.rofix.enotes_service.entity.User;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class AuthServiceImpl implements AuthService{
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final EmailSendService emailSendService;
 
     @Override
     public String register(RegisterUserDTO registerUserDTO) {
@@ -42,7 +45,22 @@ public class AuthServiceImpl implements AuthService{
                 .roles(userRoles)
                 .build();
 
-        userRepository.save(newUser);
+        User saveUser = userRepository.save(newUser);
+
+        sendVerifyEmail(saveUser);
+
         return "User has been Registered Successfully...";
+    }
+
+    private void sendVerifyEmail(User saveUser) {
+        String message = String.format(AppConstants.TEMPLATE_VERIFY_ACCOUNT, saveUser.getFirstName());
+        EmailDetailsDTO emailDetailsDTO = EmailDetailsDTO.builder()
+                .to(saveUser.getEmail())
+                .title("Account Creating Confirmation")
+                .subject("Account Created Success")
+                .message(message)
+                .build();
+
+        emailSendService.send(emailDetailsDTO);
     }
 }
