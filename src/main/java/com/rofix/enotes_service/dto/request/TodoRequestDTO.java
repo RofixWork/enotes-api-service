@@ -1,4 +1,4 @@
-package com.rofix.enotes_service.dto.response;
+package com.rofix.enotes_service.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

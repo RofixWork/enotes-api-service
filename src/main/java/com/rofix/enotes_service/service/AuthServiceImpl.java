@@ -2,20 +2,34 @@ package com.rofix.enotes_service.service;
 
 import com.rofix.enotes_service.config.AppConstants;
 import com.rofix.enotes_service.dto.request.EmailDetailsDTO;
+import com.rofix.enotes_service.dto.request.LoginUserRequestDTO;
 import com.rofix.enotes_service.dto.request.RegisterUserDTO;
+import com.rofix.enotes_service.dto.response.LoginUserResponseDTO;
 import com.rofix.enotes_service.entity.AccountStatus;
 import com.rofix.enotes_service.entity.Role;
 import com.rofix.enotes_service.entity.User;
 import com.rofix.enotes_service.exception.base.BadRequestException;
 import com.rofix.enotes_service.exception.base.ConflictException;
+import com.rofix.enotes_service.exception.base.UnauthorizedException;
 import com.rofix.enotes_service.repository.AccountStatusRepository;
 import com.rofix.enotes_service.repository.RoleRepository;
 import com.rofix.enotes_service.repository.UserRepository;
+import com.rofix.enotes_service.security.service.UserDetailsImpl;
 import com.rofix.enotes_service.utils.LoggerUtils;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.event.Level;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,6 +41,9 @@ public class AuthServiceImpl implements AuthService{
     private final RoleRepository roleRepository;
     private final EmailSendService emailSendService;
     private final AccountStatusRepository accountStatusRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final ModelMapper modelMapper;
 
     @Override
     public String register(RegisterUserDTO registerUserDTO) {
@@ -51,7 +68,7 @@ public class AuthServiceImpl implements AuthService{
                 .firstName(registerUserDTO.getFirstName())
                 .lastName(registerUserDTO.getLastName())
                 .email(registerUserDTO.getEmail())
-                .password(registerUserDTO.getPassword())
+                .password(passwordEncoder.encode(registerUserDTO.getPassword()))
                 .mobileNo(registerUserDTO.getMobileNo() != null ? registerUserDTO.getMobileNo() :null)
                 .roles(userRoles)
                 .status(saveAccountStatus)
@@ -81,7 +98,41 @@ public class AuthServiceImpl implements AuthService{
         return "Your account has been successfully verified.";
     }
 
-//    ====================== HELPERS =====================
+    @Override
+    public LoginUserResponseDTO loginUser(LoginUserRequestDTO loginUserRequestDTO) {
+        Authentication authentication;
+
+        try {
+            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserRequestDTO.getEmail(), loginUserRequestDTO.getPassword()));
+        } catch (AuthenticationException ex)
+        {
+            LoggerUtils.createLog(Level.WARN, AuthServiceImpl.class.getName(), "loginUser", "Invalid email or password");
+            throw new UnauthorizedException("Invalid Credentials!!!");
+        }
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        //check account is active or not
+        if(!userDetails.getIsActive())
+        {
+            LoggerUtils.createLog(Level.WARN, AuthServiceImpl.class.getName(), "loginUser", "Your account is not active. Please contact support.");
+            throw new UnauthorizedException("Your account is not active. Please contact support.");
+        }
+
+        LoginUserResponseDTO.UserDTO userDTO = modelMapper.map(userDetails.getUser(), LoginUserResponseDTO.UserDTO.class);
+
+        Set<String> userRoles = Optional.ofNullable(userDetails.getAuthorities())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(role -> role.replace("ROLE_", ""))
+                .collect(Collectors.toSet());
+
+        userDTO.setRoles(userRoles);
+        return LoginUserResponseDTO.builder().user(userDTO).build();
+    }
+
+    //    ====================== HELPERS =====================
     private void sendVerifyEmail(User saveUser) {
         String message = String.format(AppConstants.TEMPLATE_VERIFY_ACCOUNT, saveUser.getFirstName(), saveUser.getId(), saveUser.getStatus().getVerificationCode());
         EmailDetailsDTO emailDetailsDTO = EmailDetailsDTO.builder()

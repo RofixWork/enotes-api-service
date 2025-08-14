@@ -1,6 +1,8 @@
 package com.rofix.enotes_service.controller;
 
+import com.rofix.enotes_service.dto.request.LoginUserRequestDTO;
 import com.rofix.enotes_service.dto.request.RegisterUserDTO;
+import com.rofix.enotes_service.dto.response.LoginUserResponseDTO;
 import com.rofix.enotes_service.service.AuthService;
 import com.rofix.enotes_service.utils.ResponseUtils;
 import jakarta.validation.Valid;
@@ -24,6 +26,14 @@ public class AuthController {
         String status = authService.register(registerUserDTO);
 
         return ResponseUtils.createSuccessResponse(HttpStatus.CREATED, status);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(
+            @Valid @RequestBody LoginUserRequestDTO loginUserRequestDTO
+    ) {
+        LoginUserResponseDTO loginUserResponseDTO = authService.loginUser(loginUserRequestDTO);
+        return ResponseUtils.createSuccessResponse("Login Success", loginUserResponseDTO);
     }
 
     @GetMapping("/verify")

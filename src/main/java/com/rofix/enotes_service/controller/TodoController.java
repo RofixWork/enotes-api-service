@@ -1,6 +1,6 @@
 package com.rofix.enotes_service.controller;
 
-import com.rofix.enotes_service.dto.response.TodoRequestDTO;
+import com.rofix.enotes_service.dto.request.TodoRequestDTO;
 import com.rofix.enotes_service.dto.response.TodoResponseDTO;
 import com.rofix.enotes_service.service.TodoService;
 import com.rofix.enotes_service.utils.AuthUtils;

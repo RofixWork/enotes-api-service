@@ -1,6 +1,6 @@
 package com.rofix.enotes_service.service;
 
-import com.rofix.enotes_service.dto.response.TodoRequestDTO;
+import com.rofix.enotes_service.dto.request.TodoRequestDTO;
 import com.rofix.enotes_service.dto.response.TodoResponseDTO;
 import com.rofix.enotes_service.entity.Todo;
 import com.rofix.enotes_service.enums.TodoStatus;

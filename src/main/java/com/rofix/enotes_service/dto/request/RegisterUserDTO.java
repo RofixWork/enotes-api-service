@@ -3,7 +3,6 @@ package com.rofix.enotes_service.dto.request;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter

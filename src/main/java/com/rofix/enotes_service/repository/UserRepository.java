@@ -14,4 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByMobileNoIgnoreCase(String mobileNo);
 
     Optional<User> findByIdAndStatus_VerificationCodeAndStatus_IsActiveIsFalse(Long id, String statusVerificationCode);
+
+    Optional<User> findByEmail(String email);
 }
