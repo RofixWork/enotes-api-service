@@ -12,8 +12,7 @@ import java.util.Set;
 public class LoginUserResponseDTO {
     private UserDTO user;
 
-    @Builder.Default
-    private String token = "chdjckdmdfkldkldlkmdkmdkcmkcmdkvmd";
+    private String token;
 
     @Getter
     @Setter

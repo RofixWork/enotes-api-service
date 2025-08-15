@@ -14,6 +14,7 @@ import com.rofix.enotes_service.exception.base.UnauthorizedException;
 import com.rofix.enotes_service.repository.AccountStatusRepository;
 import com.rofix.enotes_service.repository.RoleRepository;
 import com.rofix.enotes_service.repository.UserRepository;
+import com.rofix.enotes_service.security.service.JwtService;
 import com.rofix.enotes_service.security.service.UserDetailsImpl;
 import com.rofix.enotes_service.utils.LoggerUtils;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,7 @@ public class AuthServiceImpl implements AuthService{
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final ModelMapper modelMapper;
+    private final JwtService jwtService;
 
     @Override
     public String register(RegisterUserDTO registerUserDTO) {
@@ -111,6 +113,7 @@ public class AuthServiceImpl implements AuthService{
         }
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User user = userDetails.getUser();
 
         //check account is active or not
         if(!userDetails.getIsActive())
@@ -119,17 +122,18 @@ public class AuthServiceImpl implements AuthService{
             throw new UnauthorizedException("Your account is not active. Please contact support.");
         }
 
-        LoginUserResponseDTO.UserDTO userDTO = modelMapper.map(userDetails.getUser(), LoginUserResponseDTO.UserDTO.class);
+        LoginUserResponseDTO.UserDTO userDTO = modelMapper.map(user, LoginUserResponseDTO.UserDTO.class);
 
-        Set<String> userRoles = Optional.ofNullable(userDetails.getAuthorities())
-                .orElse(Collections.emptyList())
+        Set<String> userRoles = user.getRoles()
                 .stream()
-                .map(GrantedAuthority::getAuthority)
-                .map(role -> role.replace("ROLE_", ""))
+                .map(Role::getName)
                 .collect(Collectors.toSet());
 
         userDTO.setRoles(userRoles);
-        return LoginUserResponseDTO.builder().user(userDTO).build();
+
+        //token
+        String token = jwtService.generateToken(user);
+        return LoginUserResponseDTO.builder().user(userDTO).token(token).build();
     }
 
     //    ====================== HELPERS =====================
