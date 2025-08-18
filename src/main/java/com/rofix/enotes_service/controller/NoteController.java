@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +29,7 @@ public class NoteController {
     private final NoteHelper noteHelper;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> createNote(
                 @RequestParam(name = "note")String note,
                 @RequestParam(name = "file", required = false)MultipartFile file
@@ -37,12 +39,14 @@ public class NoteController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getNotes() {
         List<NoteResponseDTO> notes = noteService.getAllNotes();
         return ResponseUtils.createSuccessResponse("All Notes", notes);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> updateNote(
             @Min(value = 1) @PathVariable Long id,
             @RequestParam(name = "note") String note,
@@ -54,6 +58,7 @@ public class NoteController {
     }
 
     @GetMapping("/user")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserNotes(
            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
@@ -66,6 +71,7 @@ public class NoteController {
     }
 
     @GetMapping("/download/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> downloadFile(@Min(value = 1) @PathVariable Long id) throws IOException {
         FileDetails fileDetails = noteHelper.getFileDetailsOrThrow(id);
         byte[] downloadFile = noteService.downloadFile(fileDetails);
@@ -81,6 +87,7 @@ public class NoteController {
     }
 
     @GetMapping("restore/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> restoreDeletedNote(
             @Min(value = 1) @PathVariable Long id
     ){
@@ -90,6 +97,7 @@ public class NoteController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> softDeleteNote(
             @Min(value = 1) @PathVariable Long id
     ){
@@ -99,6 +107,7 @@ public class NoteController {
     }
 
     @GetMapping("/user/recycle-bin")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserRecycleBin() {
         Integer userId = 1;
         List<NoteResponseDTO> noteResponseDTOS = noteService.getUserRecycleBin(userId);
@@ -107,6 +116,7 @@ public class NoteController {
     }
 
     @DeleteMapping("/user/clear/recycle-bin")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> userClearRecycleBin() {
         Integer userId = 1;
         String status = noteService.userClearRecycleBin(userId);
@@ -115,6 +125,7 @@ public class NoteController {
     }
 
     @GetMapping("/{id}/copy")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> copyNote(
             @Min(value = 1) @PathVariable("id") Long noteId
     ) {

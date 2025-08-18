@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class TodoController {
     private final TodoService todoService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> createTodo(
             @Valid @RequestBody TodoRequestDTO todoRequestDTO
             ) {
@@ -32,6 +34,7 @@ public class TodoController {
     }
 
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> updateTodo(
             @Min(value = 1) @PathVariable("id") Long todoId,
             @Valid @RequestBody TodoRequestDTO todoRequestDTO
@@ -43,19 +46,21 @@ public class TodoController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserTodos() {
         Integer userId = AuthUtils.getCurrentUserId();
-        List<TodoResponseDTO> todosByUser =todoService.findTodosByUser(userId);
+        List<TodoResponseDTO> todosByUser = todoService.findTodosByUser(userId);
 
         return ResponseUtils.createSuccessResponse("Get user todos", todosByUser);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getTodoById(
             @Min(value = 1) @PathVariable("id") Long todoId
     ) {
         Integer userId = AuthUtils.getCurrentUserId();
-        TodoResponseDTO todo =todoService.findTodoByIdAndUser(todoId, userId);
+        TodoResponseDTO todo = todoService.findTodoByIdAndUser(todoId, userId);
 
         return ResponseUtils.createSuccessResponse("Get Todo", todo);
     }

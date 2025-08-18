@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class FavouriteNoteController {
     private final FavouriteNoteService favouriteNoteService;
 
     @GetMapping("/{noteId}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> addNoteToFavourite(
             @Min (value = 1) @PathVariable("noteId") Long noteId
     ) {
@@ -32,6 +34,7 @@ public class FavouriteNoteController {
     }
 
     @DeleteMapping("/{favId}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> removeNoteFromFavourite(
             @Min (value = 1) @PathVariable("favId") Long favId
     ) {
@@ -41,6 +44,7 @@ public class FavouriteNoteController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserFavouriteNotes() {
         Integer userId = AuthUtils.getCurrentUserId();
         List<FavouriteNoteResponseDTO> favUserNotes = favouriteNoteService.getUserFavouriteNotes(userId);

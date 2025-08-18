@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,24 +30,28 @@ public class CategoryController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllCategories(){
         List<CategoryResponseDTO> categories =  categoryService.getAllCategories();
         return ResponseUtils.createSuccessResponse("Get All Categories", categories);
     }
 
     @GetMapping("/active")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> getActiveCategories(){
         List<CategoryResponseDTO> activeCategories =  categoryService.getActiveCategories();
         return ResponseUtils.createSuccessResponse("Get Active Categories", activeCategories);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getCategory(@Min(value = 1) @PathVariable Long id) {
         CategoryResponseDTO category = categoryService.getCategoryById(id);
         return ResponseUtils.createSuccessResponse("Get Category", category);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateCategory(@Min(value = 1) @PathVariable Long id, @Valid @RequestBody CategoryRequestDTO categoryDTO){
         CategoryResponseDTO updated = categoryService.editCategory(id, categoryDTO);
 
@@ -54,6 +59,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteCategory(@Min(value = 1) @PathVariable Long id) {
         String status = categoryService.deleteCategoryById(id);
 

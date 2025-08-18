@@ -1,12 +1,10 @@
 package com.rofix.enotes_service.security.service;
 
 import com.rofix.enotes_service.entity.User;
-import com.rofix.enotes_service.exception.base.BadRequestException;
 import com.rofix.enotes_service.utils.LoggerUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,10 +54,9 @@ public class JwtServiceImpl implements JwtService{
     }
 
     @Override
-    public Boolean validateToken(String token) {
+    public void validateToken(String token) {
         try {
             Jwts.parser().verifyWith(getKey()).build().parseSignedClaims(token);
-            return true;
         } catch (JwtException e) {
             LoggerUtils.createLog(Level.ERROR, JwtServiceImpl.class.getName(), "validateToken", "Invalid Token or expired!!!");
             throw new BadCredentialsException("Invalid Token or expired!!!");

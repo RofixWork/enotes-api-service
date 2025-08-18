@@ -69,7 +69,7 @@ public class AuthServiceImpl implements AuthService{
                 .lastName(registerUserDTO.getLastName())
                 .email(registerUserDTO.getEmail())
                 .password(passwordEncoder.encode(registerUserDTO.getPassword()))
-                .mobileNo(registerUserDTO.getMobileNo() != null ? registerUserDTO.getMobileNo() :null)
+                .mobileNo(registerUserDTO.getMobileNo() != null ? registerUserDTO.getMobileNo() : null)
                 .roles(userRoles)
                 .status(saveAccountStatus)
                 .build();

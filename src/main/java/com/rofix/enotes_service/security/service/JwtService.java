@@ -10,5 +10,5 @@ public interface JwtService {
 
     String getTokenFromHeader(HttpServletRequest request);
 
-    Boolean validateToken(String token);
+    void validateToken(String token);
 }
