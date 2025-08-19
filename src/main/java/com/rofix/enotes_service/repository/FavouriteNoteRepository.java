@@ -9,9 +9,9 @@ import java.util.Optional;
 
 @Repository
 public interface FavouriteNoteRepository extends JpaRepository<FavouriteNote,Long> {
-    List<FavouriteNote> findAllByUser(Integer user);
+    List<FavouriteNote> findAllByUser(Long user);
 
-    boolean existsByNote_IdAndUser(Long noteId, Integer user);
+    boolean existsByNote_IdAndUser(Long noteId, Long user);
 
-    Optional<FavouriteNote> findByIdAndUser(Long id, Integer user);
+    Optional<FavouriteNote> findByIdAndUser(Long id, Long user);
 }

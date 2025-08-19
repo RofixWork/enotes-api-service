@@ -20,11 +20,11 @@ public class TodoHelper {
     private final TodoRepository todoRepository;
     private final ModelMapper modelMapper;
 
-    public List<Todo> getUserTodos(Integer userId) {
+    public List<Todo> getUserTodos(Long userId) {
         return todoRepository.findAllByCreatedBy(userId);
     }
 
-    public Todo getTodoByIdAndUser(Long todoId, Integer userId) {
+    public Todo getTodoByIdAndUser(Long todoId, Long userId) {
         return todoRepository.findByIdAndCreatedBy(todoId, userId).orElseThrow(() -> {
             LoggerUtils.createLog(Level.WARN, getClass().getName(),
                     "getFavNoteByIdAndUserOrThrow",

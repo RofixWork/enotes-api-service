@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TodoRepository extends JpaRepository<Todo,Long> {
-    List<Todo> findAllByCreatedBy(Integer createdBy);
+    List<Todo> findAllByCreatedBy(Long createdBy);
 
-    Optional<Todo> findByIdAndCreatedBy(Long id, Integer createdBy);
+    Optional<Todo> findByIdAndCreatedBy(Long id, Long createdBy);
 }

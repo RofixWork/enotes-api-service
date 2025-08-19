@@ -35,7 +35,7 @@ public class TodoServiceImpl implements TodoService{
     }
 
     @Override
-    public TodoResponseDTO updateTodo(Long todoId, Integer userId, TodoRequestDTO todoRequestDTO) {
+    public TodoResponseDTO updateTodo(Long todoId, Long userId, TodoRequestDTO todoRequestDTO) {
         Todo todo = todoHelper.getTodoByIdAndUser(todoId, userId);
         TodoStatus todoStatus = TodoStatus.getTodoStatus(todoRequestDTO.getStatus());
 
@@ -48,13 +48,13 @@ public class TodoServiceImpl implements TodoService{
     }
 
     @Override
-    public List<TodoResponseDTO> findTodosByUser(Integer userId) {
+    public List<TodoResponseDTO> findTodosByUser(Long userId) {
         List<Todo> userTodos = todoHelper.getUserTodos(userId);
         return userTodos.stream().map(todoHelper::getTodoResponseDTO).toList();
     }
 
     @Override
-    public TodoResponseDTO findTodoByIdAndUser(Long id, Integer userId) {
+    public TodoResponseDTO findTodoByIdAndUser(Long id, Long userId) {
         Todo todo = todoHelper.getTodoByIdAndUser(id, userId);
         return todoHelper.getTodoResponseDTO(todo);
     }

@@ -128,6 +128,7 @@ public class AuthServiceImpl implements AuthService{
                 .collect(Collectors.toSet());
 
         userDTO.setRoles(userRoles);
+        userDTO.setIsActive(user.getStatus().getIsActive());
 
         //token
         String token = jwtService.generateToken(user);

@@ -24,5 +24,5 @@ public class FavouriteNote {
     private Note note;
 
     @Column(name = "user_id")
-    private Integer user;
+    private Long user;
 }

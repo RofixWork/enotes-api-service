@@ -39,7 +39,7 @@ public class TodoController {
             @Min(value = 1) @PathVariable("id") Long todoId,
             @Valid @RequestBody TodoRequestDTO todoRequestDTO
     ) {
-        Integer userId = AuthUtils.getCurrentUserId();
+        Long userId = AuthUtils.getLoggedInUser().getId();
         TodoResponseDTO todoResponseDTO = todoService.updateTodo(todoId, userId, todoRequestDTO);
 
         return ResponseUtils.createSuccessResponse("Update todo success",  todoResponseDTO);
@@ -48,7 +48,7 @@ public class TodoController {
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserTodos() {
-        Integer userId = AuthUtils.getCurrentUserId();
+        Long userId = AuthUtils.getLoggedInUser().getId();
         List<TodoResponseDTO> todosByUser = todoService.findTodosByUser(userId);
 
         return ResponseUtils.createSuccessResponse("Get user todos", todosByUser);
@@ -59,7 +59,7 @@ public class TodoController {
     public ResponseEntity<?> getTodoById(
             @Min(value = 1) @PathVariable("id") Long todoId
     ) {
-        Integer userId = AuthUtils.getCurrentUserId();
+        Long userId = AuthUtils.getLoggedInUser().getId();
         TodoResponseDTO todo = todoService.findTodoByIdAndUser(todoId, userId);
 
         return ResponseUtils.createSuccessResponse("Get Todo", todo);

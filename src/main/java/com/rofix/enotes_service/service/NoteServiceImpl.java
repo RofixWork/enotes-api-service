@@ -11,6 +11,7 @@ import com.rofix.enotes_service.exception.base.BadRequestException;
 import com.rofix.enotes_service.helper.CategoryHelper;
 import com.rofix.enotes_service.helper.NoteHelper;
 import com.rofix.enotes_service.repository.NoteRepository;
+import com.rofix.enotes_service.utils.AuthUtils;
 import com.rofix.enotes_service.utils.LoggerUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -71,7 +72,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public PageResponseDTO getUserNotes(Integer userId, Integer pageNumber, Integer pageSize) {
+    public PageResponseDTO getUserNotes(Long userId, Integer pageNumber, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNumber-1, pageSize);
         Page<Note> notePage = noteRepository.findAllByCreatedByAndIsDeletedIsFalse(userId, pageable);
 
@@ -96,7 +97,8 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public NoteResponseDTO updateNote(Long id, String note, MultipartFile file) throws JsonProcessingException {
-        Note currentNote = noteHelper.getNoteOrThrow(id);
+        Long userId = AuthUtils.getLoggedInUser().getId();
+        Note currentNote = noteHelper.getNoteByIdAndCreatedByOrThrow(id, userId);
         NoteRequestDTO noteRequestDTO = noteHelper.getNoteRequestDTO(note);
         Category category = categoryHelper.getByIdAndActiveAndNotDeletedOrThrow(noteRequestDTO.getCategoryId());
         FileDetails fileDetails = file != null && !file.isEmpty() ?
@@ -114,7 +116,8 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public String softDeleteNote(Long id) {
-        Note note = noteHelper.getNoteOrThrow(id);
+        Long userId = AuthUtils.getLoggedInUser().getId();
+        Note note = noteHelper.getNoteByIdAndCreatedByOrThrow(id, userId);
 
         if(note.getIsDeleted())
         {
@@ -131,7 +134,8 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public NoteResponseDTO restoreDeleteNote(Long id) {
-        Note note  = noteHelper.getNoteOrThrow(id);
+        Long userId = AuthUtils.getLoggedInUser().getId();
+        Note note  = noteHelper.getNoteByIdAndCreatedByOrThrow(id, userId);
 
         if(note.getIsDeleted() == Boolean.FALSE)
         {
@@ -147,14 +151,14 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public List<NoteResponseDTO> getUserRecycleBin(Integer userId) {
+    public List<NoteResponseDTO> getUserRecycleBin(Long userId) {
         List<Note> notes = noteRepository.findAllByCreatedByAndIsDeletedIsTrue(userId);
 
         return notes.stream().map(note -> modelMapper.map(note, NoteResponseDTO.class)).toList();
     }
 
     @Override
-    public String userClearRecycleBin(Integer userId) {
+    public String userClearRecycleBin(Long userId) {
         List<Note> notes = noteRepository.findAllByCreatedByAndIsDeletedIsTrue(userId);
 
         if(notes.isEmpty())

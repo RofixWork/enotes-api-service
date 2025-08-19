@@ -46,7 +46,7 @@ public class FavouriteNoteController {
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserFavouriteNotes() {
-        Integer userId = AuthUtils.getCurrentUserId();
+        Long userId = AuthUtils.getLoggedInUser().getId();
         List<FavouriteNoteResponseDTO> favUserNotes = favouriteNoteService.getUserFavouriteNotes(userId);
 
         return ResponseUtils.createSuccessResponse("Get User Fav Notes", favUserNotes);

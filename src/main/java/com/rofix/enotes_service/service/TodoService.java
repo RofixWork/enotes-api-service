@@ -8,10 +8,10 @@ import java.util.List;
 public interface TodoService {
     TodoResponseDTO createTodo(TodoRequestDTO todoRequestDTO);
 
-    TodoResponseDTO updateTodo(Long todoId, Integer userId, TodoRequestDTO todoRequestDTO);
+    TodoResponseDTO updateTodo(Long todoId, Long userId, TodoRequestDTO todoRequestDTO);
 
-    List<TodoResponseDTO> findTodosByUser(Integer userId);
+    List<TodoResponseDTO> findTodosByUser(Long userId);
 
-    TodoResponseDTO findTodoByIdAndUser(Long id, Integer userId);
+    TodoResponseDTO findTodoByIdAndUser(Long id, Long userId);
 
 }

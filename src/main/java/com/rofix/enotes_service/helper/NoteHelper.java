@@ -80,11 +80,11 @@ public class NoteHelper {
         });
     }
 
-    public Note getNoteOrThrow(Long id)
+    public Note getNoteByIdAndCreatedByOrThrow(Long noteId, Long userId)
     {
-        return noteRepository.findById(id).orElseThrow(() -> {
-            LoggerUtils.createLog(Level.ERROR, NoteServiceImpl.class.getName(), "getNoteOrThrow", "Note not found with id: {}", id);
-            return new NotFoundException("Note not found with id " + id);
+        return noteRepository.findByIdAndCreatedBy(noteId, userId).orElseThrow(() -> {
+            LoggerUtils.createLog(Level.ERROR, NoteServiceImpl.class.getName(), "getNoteOrThrow", "Note not found with id {} or access denied", noteId);
+            return new NotFoundException("Note not found with id or access denied");
         });
     }
 

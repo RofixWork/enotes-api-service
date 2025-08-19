@@ -9,5 +9,5 @@ public interface FavouriteNoteService {
 
     String removeNoteFromFavourite(Long favId);
 
-    List<FavouriteNoteResponseDTO> getUserFavouriteNotes(Integer userId);
+    List<FavouriteNoteResponseDTO> getUserFavouriteNotes(Long userId);
 }

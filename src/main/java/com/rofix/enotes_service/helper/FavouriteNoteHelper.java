@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class FavouriteNoteHelper {
     private final FavouriteNoteRepository favouriteNoteRepository;
 
-    public FavouriteNote getFavNoteByIdAndUserOrThrow(Long favId, Integer userId) {
+    public FavouriteNote getFavNoteByIdAndUserOrThrow(Long favId, Long userId) {
         return favouriteNoteRepository.findByIdAndUser(favId, userId)
                 .orElseThrow(() -> {
                     LoggerUtils.createLog(Level.WARN, getClass().getName(),

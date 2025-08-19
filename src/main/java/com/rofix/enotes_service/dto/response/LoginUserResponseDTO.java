@@ -21,9 +21,11 @@ public class LoginUserResponseDTO {
     @Builder
     public static class UserDTO
     {
+        private Long id;
         private String fullName;
         private String email;
         private String mobileNo;
         private Set<String> roles;
+        private Boolean isActive;
     }
 }

@@ -7,6 +7,7 @@ import com.rofix.enotes_service.dto.response.PageResponseDTO;
 import com.rofix.enotes_service.entity.FileDetails;
 import com.rofix.enotes_service.helper.NoteHelper;
 import com.rofix.enotes_service.service.NoteService;
+import com.rofix.enotes_service.utils.AuthUtils;
 import com.rofix.enotes_service.utils.ResponseUtils;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +64,7 @@ public class NoteController {
            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
     ) {
-        Integer userId = 1;
+        Long userId = AuthUtils.getLoggedInUser().getId();
 
         PageResponseDTO resp = noteService.getUserNotes(userId, pageNumber, pageSize);
 
@@ -109,7 +110,7 @@ public class NoteController {
     @GetMapping("/user/recycle-bin")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserRecycleBin() {
-        Integer userId = 1;
+        Long userId = AuthUtils.getLoggedInUser().getId();
         List<NoteResponseDTO> noteResponseDTOS = noteService.getUserRecycleBin(userId);
 
         return ResponseUtils.createSuccessResponse("Get Recycle Bin Note", noteResponseDTOS);
@@ -118,7 +119,7 @@ public class NoteController {
     @DeleteMapping("/user/clear/recycle-bin")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> userClearRecycleBin() {
-        Integer userId = 1;
+        Long userId = AuthUtils.getLoggedInUser().getId();
         String status = noteService.userClearRecycleBin(userId);
 
         return ResponseUtils.createSuccessResponse(status);

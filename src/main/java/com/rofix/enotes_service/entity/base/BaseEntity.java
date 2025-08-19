@@ -28,7 +28,7 @@ import java.time.LocalDate;
 public abstract class BaseEntity {
     @CreatedBy
     @Column(updatable = false)
-    private Integer createdBy;
+    private Long createdBy;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -36,7 +36,7 @@ public abstract class BaseEntity {
 
     @LastModifiedBy
     @Column(insertable = false)
-    private Integer updatedBy;
+    private Long updatedBy;
 
     @UpdateTimestamp
     @Column(insertable = false)
