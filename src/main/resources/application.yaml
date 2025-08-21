@@ -1,0 +1,88 @@
+# ----------------------------------------------
+# Default Settings (Active when no other profile is specified)
+# This section holds properties that are the same across all environments.
+# ----------------------------------------------
+spring:
+  application:
+    name: E-notes Service APIs
+  profiles:
+    active: uat
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+  jwt:
+    secret: ${JWT_SECRET}
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+file:
+  upload:
+    path: notes
+
+---
+# ----------------------------------------------
+# Development Profile
+# ----------------------------------------------
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/enotes_dev
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+# ----------------------------------------------
+# Test Profile
+# ----------------------------------------------
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:mysql://localhost:3306/enotes_test
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+# ----------------------------------------------
+# UAT Profile
+# ----------------------------------------------
+spring:
+  config:
+    activate:
+      on-profile: uat
+  datasource:
+    url: jdbc:mysql://localhost:3306/enotes_uat
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+# ----------------------------------------------
+# Production Profile
+# ----------------------------------------------
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:mysql://localhost:3306/enotes_prod
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
