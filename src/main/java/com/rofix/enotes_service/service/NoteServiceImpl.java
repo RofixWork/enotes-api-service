@@ -79,20 +79,7 @@ public class NoteServiceImpl implements NoteService {
         if(notePage.isEmpty())
             return PageResponseDTO.builder().build();
 
-        List<NoteResponseDTO> noteResponseDTOS = notePage.get()
-                .map(note -> modelMapper.map(note, NoteResponseDTO.class))
-                .toList();
-
-        return PageResponseDTO.builder()
-                .content(noteResponseDTOS)
-                .pageNumber(1)
-                .pageSize(5)
-                .totalPages(notePage.getTotalPages())
-                .totalElements(notePage.getTotalElements())
-                .pageSize(notePage.getSize())
-                .isLast(notePage.isLast())
-                .isFirst(notePage.isFirst())
-                .build();
+        return noteHelper.getPageResponse(notePage, pageNumber, pageSize);
     }
 
     @Override
@@ -181,5 +168,16 @@ public class NoteServiceImpl implements NoteService {
                 .build();
         noteRepository.save(copiedNote);
     }
+
+    @Override
+    public PageResponseDTO searchNote(String search, String category, Integer pageNumber, Integer pageSize)
+    {
+        Pageable pageable = PageRequest.of(pageNumber-1, pageSize);
+
+        Page<Note> notePage = noteRepository.findAll(noteHelper.getNoteSpecification(search, category), pageable);
+
+        return noteHelper.getPageResponse(notePage, pageNumber, pageSize);
+    }
 }
+
 

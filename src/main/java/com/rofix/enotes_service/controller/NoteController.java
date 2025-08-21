@@ -10,12 +10,15 @@ import com.rofix.enotes_service.service.NoteService;
 import com.rofix.enotes_service.utils.AuthUtils;
 import com.rofix.enotes_service.utils.ResponseUtils;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/notes", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
+@Validated
 public class NoteController {
     private final NoteService noteService;
     private final NoteHelper noteHelper;
@@ -133,5 +137,18 @@ public class NoteController {
         noteService.copyNote(noteId);
 
         return ResponseUtils.createSuccessResponse("Note has been Copied Successfully.");
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> searchNote(
+            @RequestParam(name = "keyword", defaultValue = "") String search,
+            @RequestParam(name = "category", defaultValue = "") String category,
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
+    ) {
+        PageResponseDTO noteResponseDTOS = noteService.searchNote(search, category, pageNumber, pageSize);
+
+        return ResponseUtils.createSuccessResponse("Search Note Successfully", noteResponseDTOS);
     }
 }

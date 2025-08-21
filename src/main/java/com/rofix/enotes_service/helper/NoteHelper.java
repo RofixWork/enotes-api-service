@@ -3,6 +3,8 @@ package com.rofix.enotes_service.helper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rofix.enotes_service.dto.request.NoteRequestDTO;
+import com.rofix.enotes_service.dto.response.NoteResponseDTO;
+import com.rofix.enotes_service.dto.response.PageResponseDTO;
 import com.rofix.enotes_service.entity.FileDetails;
 import com.rofix.enotes_service.entity.Note;
 import com.rofix.enotes_service.exception.base.BadRequestException;
@@ -11,20 +13,26 @@ import com.rofix.enotes_service.exception.base.NotFoundException;
 import com.rofix.enotes_service.repository.FileDetailsRepository;
 import com.rofix.enotes_service.repository.NoteRepository;
 import com.rofix.enotes_service.service.NoteServiceImpl;
+import com.rofix.enotes_service.specs.NoteSpecification;
 import com.rofix.enotes_service.utils.LoggerUtils;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
+import org.modelmapper.ModelMapper;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -35,6 +43,7 @@ public class NoteHelper {
     private final FileDetailsRepository fileDetailsRepository;
     private final NoteRepository noteRepository;
     private final Validator validatorHandler;
+    private final ModelMapper modelMapper;
     @Value("${file.upload.path}")
     private String uploadFilePath;
     
@@ -142,5 +151,37 @@ public class NoteHelper {
             throw new CustomValidationException(violations);
         }
         return noteRequestDTO;
+    }
+
+    public <T> PageResponseDTO getPageResponse(Page<T> notePage, Integer pageNumber, Integer pageSize)
+    {
+        List<NoteResponseDTO> noteResponseDTOS = notePage.get().map(note -> modelMapper.map(note, NoteResponseDTO.class)).toList();
+
+        return PageResponseDTO.builder()
+                .content(noteResponseDTOS)
+                .pageNumber(pageNumber)
+                .pageSize(pageSize)
+                .totalPages(notePage.getTotalPages())
+                .totalElements(notePage.getTotalElements())
+                .pageSize(notePage.getSize())
+                .isLast(notePage.isLast())
+                .isFirst(notePage.isFirst())
+                .build();
+    }
+
+    public Specification<Note> getNoteSpecification(String search, String category) {
+        List<Specification<Note>> filters = new ArrayList<>();
+
+        if(StringUtils.hasText(search))
+        {
+            filters.add(NoteSpecification.byTitleOrDescription(search));
+        }
+
+        if(StringUtils.hasText(category))
+        {
+            filters.add(NoteSpecification.byCategory(category));
+        }
+
+        return Specification.allOf(filters);
     }
 }

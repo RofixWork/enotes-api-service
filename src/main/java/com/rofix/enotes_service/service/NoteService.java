@@ -30,4 +30,5 @@ public interface NoteService {
     String userClearRecycleBin(Long userId);
 
     void copyNote(Long noteId);
+    PageResponseDTO searchNote(String search, String category, Integer pageNumber, Integer pageSize);
 }
