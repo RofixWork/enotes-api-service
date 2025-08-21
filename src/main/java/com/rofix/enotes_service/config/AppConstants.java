@@ -58,7 +58,7 @@ public class AppConstants {
                      <div class="content">
                          <h2>Your account has been successfully registered.</h2>
                          <h3>Please click the link below to verify your account:</h3>
-                         <a class="button" href="http://localhost:8080/api/v1/auth/verify?uid=%d&vc=%s">Verify Account</a>
+                         <a class="button" href="%s">Verify Account</a>
                      </div>
                      <div class="footer">
                          <h3>Enotes.com</h3>

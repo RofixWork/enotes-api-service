@@ -17,6 +17,8 @@ import com.rofix.enotes_service.repository.UserRepository;
 import com.rofix.enotes_service.security.service.JwtService;
 import com.rofix.enotes_service.security.service.UserDetailsImpl;
 import com.rofix.enotes_service.utils.LoggerUtils;
+import com.rofix.enotes_service.utils.UrlUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.event.Level;
@@ -24,8 +26,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService{
     private final JwtService jwtService;
 
     @Override
-    public String register(RegisterUserDTO registerUserDTO) {
+    public String register(RegisterUserDTO registerUserDTO, HttpServletRequest request) {
         boolean checkUserInfo = userRepository.existsByEmailIgnoreCase(registerUserDTO.getEmail()) || userRepository.existsByMobileNoIgnoreCase(registerUserDTO.getMobileNo());
         if(checkUserInfo){
             throw new ConflictException("Registration failed. Please check your details and try again.");
@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService{
 
         User saveUser = userRepository.save(newUser);
 
-        sendVerifyEmail(saveUser);
+        sendVerifyEmail(saveUser, request);
 
         return "User has been Registered Successfully...";
     }
@@ -136,8 +136,10 @@ public class AuthServiceImpl implements AuthService{
     }
 
     //    ====================== HELPERS =====================
-    private void sendVerifyEmail(User saveUser) {
-        String message = String.format(AppConstants.TEMPLATE_VERIFY_ACCOUNT, saveUser.getFirstName(), saveUser.getId(), saveUser.getStatus().getVerificationCode());
+    private void sendVerifyEmail(User saveUser, HttpServletRequest request) {
+        String baseURL = UrlUtils.getBaseUrl(request);
+        String verifyLink = String.format("%s/api/v1/auth/verify?uid=%d&vc=%s", baseURL, saveUser.getId(), saveUser.getStatus().getVerificationCode());
+        String message = String.format(AppConstants.TEMPLATE_VERIFY_ACCOUNT, saveUser.getFirstName(), verifyLink);
         EmailDetailsDTO emailDetailsDTO = EmailDetailsDTO.builder()
                 .to(saveUser.getEmail())
                 .title("Account Creating Confirmation")

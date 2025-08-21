@@ -5,6 +5,7 @@ import com.rofix.enotes_service.dto.request.RegisterUserDTO;
 import com.rofix.enotes_service.dto.response.LoginUserResponseDTO;
 import com.rofix.enotes_service.service.AuthService;
 import com.rofix.enotes_service.utils.ResponseUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,10 +21,11 @@ public class AuthController {
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> register(
-            @Valid @RequestBody RegisterUserDTO registerUserDTO
+            @Valid @RequestBody RegisterUserDTO registerUserDTO,
+            HttpServletRequest request
     )
     {
-        String status = authService.register(registerUserDTO);
+        String status = authService.register(registerUserDTO, request);
 
         return ResponseUtils.createSuccessResponse(HttpStatus.CREATED, status);
     }
