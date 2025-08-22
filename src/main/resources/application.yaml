@@ -30,7 +30,6 @@ spring:
 file:
   upload:
     path: notes
-
 ---
 # ----------------------------------------------
 # Development Profile
