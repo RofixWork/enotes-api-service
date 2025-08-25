@@ -2,6 +2,7 @@ package com.rofix.enotes_service.controller;
 
 import com.rofix.enotes_service.dto.request.ChangePasswordDTO;
 import com.rofix.enotes_service.dto.response.UserResponseDTO;
+import com.rofix.enotes_service.endpoint.UserEndpoint;
 import com.rofix.enotes_service.entity.User;
 import com.rofix.enotes_service.service.UserService;
 import com.rofix.enotes_service.utils.AuthUtils;
@@ -9,16 +10,14 @@ import com.rofix.enotes_service.utils.ResponseUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserEndpoint {
     private final UserService userService;
 
-    @GetMapping
+    @Override
     public ResponseEntity<?> getProfile()
     {
         User currentUser = AuthUtils.getLoggedInUser();
@@ -28,9 +27,9 @@ public class UserController {
         return ResponseUtils.createSuccessResponse("Current User", userResponseDTO);
     }
 
-    @PostMapping("/change-password")
+    @Override
     public ResponseEntity<?> changePassword(
-            @Valid @RequestBody ChangePasswordDTO changePasswordDTO
+            ChangePasswordDTO changePasswordDTO
     ) {
         User currentUser = AuthUtils.getLoggedInUser();
         String status = userService.changePassword(currentUser, changePasswordDTO);
