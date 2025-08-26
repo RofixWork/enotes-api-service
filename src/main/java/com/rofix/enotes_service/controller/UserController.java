@@ -7,7 +7,6 @@ import com.rofix.enotes_service.entity.User;
 import com.rofix.enotes_service.service.UserService;
 import com.rofix.enotes_service.utils.AuthUtils;
 import com.rofix.enotes_service.utils.ResponseUtils;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

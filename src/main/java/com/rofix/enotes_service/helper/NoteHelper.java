@@ -116,8 +116,8 @@ public class NoteHelper {
     }
 
     private String getDisplayFileName(String originalFilename) {
-        String fileName = FilenameUtils.getBaseName(originalFilename),
-                extension = FilenameUtils.getExtension(originalFilename);
+        String fileName = FilenameUtils.getBaseName(originalFilename);
+        String extension = FilenameUtils.getExtension(originalFilename);
 
         if(fileName.length() > 8)
         {
