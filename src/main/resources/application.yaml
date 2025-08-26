@@ -6,7 +6,7 @@ spring:
   application:
     name: E-notes Service APIs
   profiles:
-    active: dev
+    active: prod
   mail:
     host: smtp.gmail.com
     port: 587
@@ -27,6 +27,15 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+
+springdoc:
+  swagger-ui:
+    operations-sorter: method
+    tags-sorter: alpha
+    path: /enotes-doc
+  api-docs:
+    path: /enotes-api-doc
+
 file:
   upload:
     path: notes
@@ -57,7 +66,8 @@ spring:
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+server:
+  port: 8081
 ---
 # ----------------------------------------------
 # UAT Profile
@@ -85,3 +95,5 @@ spring:
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+server:
+  port: 8082
