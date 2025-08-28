@@ -6,6 +6,7 @@ import com.rofix.enotes_service.endpoint.CategoryEndpoint;
 import com.rofix.enotes_service.utils.ResponseUtils;
 import com.rofix.enotes_service.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
