@@ -28,6 +28,12 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
 springdoc:
   swagger-ui:
     operations-sorter: method
