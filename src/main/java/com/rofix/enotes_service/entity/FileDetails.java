@@ -1,9 +1,7 @@
 package com.rofix.enotes_service.entity;
 
-import com.rofix.enotes_service.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "FileDetails")

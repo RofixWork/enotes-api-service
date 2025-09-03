@@ -7,7 +7,7 @@ public abstract class CustomException extends RuntimeException {
     @Getter
     private final HttpStatus status;
 
-    public CustomException(String message, HttpStatus status) {
+    protected CustomException(String message, HttpStatus status) {
         super(message);
         this.status = status;
     }

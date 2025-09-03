@@ -2,13 +2,11 @@ package com.rofix.enotes_service.security.jwt;
 
 import com.rofix.enotes_service.security.service.JwtService;
 import com.rofix.enotes_service.security.service.UserDetailsServiceImpl;
-import com.rofix.enotes_service.utils.LoggerUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.event.Level;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
