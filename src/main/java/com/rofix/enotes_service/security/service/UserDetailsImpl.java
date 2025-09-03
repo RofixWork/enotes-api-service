@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class UserDetailsImpl implements UserDetails {
-    private User user;
+    private final User user;
 
     public UserDetailsImpl(User user) {
         this.user = user;

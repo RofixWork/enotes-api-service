@@ -23,7 +23,6 @@ public class NoteSpecification {
     public static Specification<Note> byCategory(String category)
     {
         return (Root<Note> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            Long userId = AuthUtils.getLoggedInUser().getId();
             String cleanCategory = category.trim().toLowerCase();
             Expression<String> dbCategory = criteriaBuilder.lower(criteriaBuilder.trim(root.get("category").get("name")));
             Predicate byCategory = criteriaBuilder.equal(dbCategory, cleanCategory);

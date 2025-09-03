@@ -3,11 +3,9 @@ package com.rofix.enotes_service.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.extern.slf4j.XSlf4j;
 import org.hibernate.annotations.Formula;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Table(name = "users")

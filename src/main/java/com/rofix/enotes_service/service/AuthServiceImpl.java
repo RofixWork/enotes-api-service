@@ -57,7 +57,6 @@ public class AuthServiceImpl implements AuthService{
             return new BadRequestException("Invalid Role!!!");
         })).collect(Collectors.toSet());
 
-        //TODO: create ACCOUNT STATUS
         AccountStatus accountStatus = AccountStatus.builder()
                 .verificationCode(UUID.randomUUID().toString())
                 .build();
@@ -114,7 +113,7 @@ public class AuthServiceImpl implements AuthService{
         User user = userDetails.getUser();
 
         //check account is active or not
-        if(!userDetails.getIsActive())
+        if(!userDetails.getIsActive().booleanValue())
         {
             LoggerUtils.createLog(Level.WARN, AuthServiceImpl.class.getName(), "loginUser", "Your account is not active. Please contact support.");
             throw new UnauthorizedException("Your account is not active. Please contact support.");

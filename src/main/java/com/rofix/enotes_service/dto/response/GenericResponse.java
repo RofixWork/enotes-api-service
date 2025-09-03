@@ -1,11 +1,8 @@
 package com.rofix.enotes_service.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.ObjectUtils;
-
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;

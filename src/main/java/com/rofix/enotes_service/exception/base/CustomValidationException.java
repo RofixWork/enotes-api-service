@@ -9,7 +9,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class CustomValidationException extends CustomException {
-    private Set<? extends ConstraintViolation<?>> constraintViolation;
+    private final transient Set<? extends ConstraintViolation<?>> constraintViolation;
 
     public CustomValidationException(Set<? extends ConstraintViolation<?>> constraintViolation) {
         super("Validation Failed", HttpStatus.BAD_REQUEST);

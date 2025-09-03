@@ -3,25 +3,24 @@ package com.rofix.enotes_service.controller;
 import com.rofix.enotes_service.dto.request.LoginUserRequestDTO;
 import com.rofix.enotes_service.dto.request.RegisterUserDTO;
 import com.rofix.enotes_service.dto.response.LoginUserResponseDTO;
+import com.rofix.enotes_service.endpoint.AuthEndpoint;
 import com.rofix.enotes_service.service.AuthService;
+import com.rofix.enotes_service.utils.LoggerUtils;
 import com.rofix.enotes_service.utils.ResponseUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.event.Level;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/auth", produces = MediaType.APPLICATION_JSON_VALUE)
-public class AuthController {
+public class AuthController implements AuthEndpoint {
     private final AuthService authService;
 
-    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> register(
-            @Valid @RequestBody RegisterUserDTO registerUserDTO,
+            RegisterUserDTO registerUserDTO,
             HttpServletRequest request
     )
     {
@@ -30,18 +29,18 @@ public class AuthController {
         return ResponseUtils.createSuccessResponse(HttpStatus.CREATED, status);
     }
 
-    @PostMapping("/login")
+    @Override
     public ResponseEntity<?> login(
-            @Valid @RequestBody LoginUserRequestDTO loginUserRequestDTO
+            LoginUserRequestDTO loginUserRequestDTO
     ) {
         LoginUserResponseDTO loginUserResponseDTO = authService.loginUser(loginUserRequestDTO);
         return ResponseUtils.createSuccessResponse("Login Success", loginUserResponseDTO);
     }
 
-    @GetMapping("/verify")
+    @Override
     public ResponseEntity<?> verify(
-            @RequestParam("uid") Long userId,
-            @RequestParam("vc") String verificationCode
+           Long userId,
+           String verificationCode
     ) {
         String status = authService.verifyUserAccount(userId, verificationCode);
 

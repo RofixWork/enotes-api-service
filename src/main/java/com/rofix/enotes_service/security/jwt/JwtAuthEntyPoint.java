@@ -1,7 +1,6 @@
 package com.rofix.enotes_service.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
@@ -26,7 +25,6 @@ public class JwtAuthEntyPoint implements AuthenticationEntryPoint {
         final Map<String, Object> body = new HashMap<>();
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
         body.put("error", "Unauthorized");
-        System.out.println(authException.getMessage());
         body.put("message", message);
 
         final ObjectMapper objectMapper = new ObjectMapper();
