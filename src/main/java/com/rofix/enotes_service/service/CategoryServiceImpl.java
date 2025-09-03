@@ -8,6 +8,10 @@ import com.rofix.enotes_service.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable("getAllCategories")
     public List<CategoryResponseDTO> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         log.info("[CategoryServiceImpl] :: [getAllCategories] :: Get All Categories...");
@@ -40,6 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable("getActiveCategories")
     public List<CategoryResponseDTO> getActiveCategories() {
         List<Category> activeCategories =  categoryRepository.findByIsActiveTrueAndIsDeletedFalse();
         log.info("[CategoryServiceImpl] :: [getActiveCategories] :: Get All Active Categories...");
@@ -47,6 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable(value = "getCategoryById", key = "#id")
     public CategoryResponseDTO getCategoryById(Long id) {
         Category category = categoryHelper.getByIdAndActiveAndNotDeletedOrThrow(id);
         log.info("[CategoryServiceImpl] :: [getCategoryById] :: Get Category with Id: [{}]", id);
@@ -54,6 +61,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = {"getAllCategories", "getActiveCategories"}, allEntries = true),
+                    @CacheEvict(value = "getCategoryById", key = "#id")
+            }
+    )
     public String deleteCategoryById(Long id) {
         Category category = categoryHelper.getByIdAndActiveAndNotDeletedOrThrow(id);
 
@@ -65,6 +78,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Caching(
+            evict = { @CacheEvict(value = {"getAllCategories", "getActiveCategories"}, allEntries = true) },
+            put = { @CachePut(value = "getCategoryById", key = "#id") }
+    )
     public CategoryResponseDTO editCategory(Long id, CategoryRequestDTO categoryDTO) {
         Category category = categoryHelper.getCategoryByIdThrow(id);
 

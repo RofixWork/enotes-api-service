@@ -3,15 +3,13 @@ package com.rofix.enotes_service.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CategoryRequestDTO {
 
     @NotBlank(message = "The category name cannot be blank.")
@@ -23,7 +21,9 @@ public class CategoryRequestDTO {
     private String description;
 
     @NotNull(message = "Category Active status cannot be null!!!")
+    @Builder.Default
     private Boolean isActive = true;
 
+    @Builder.Default
     private Boolean isDeleted = false;
 }

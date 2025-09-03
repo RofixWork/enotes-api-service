@@ -39,8 +39,8 @@ public class FavouriteNoteServiceImpl implements FavouriteNoteService {
         FavouriteNote favouriteNote = FavouriteNote.builder()
                 .note(note)
                 .user(userId)
-                .build(),
-                savedFavNote = favouriteNoteRepository.save(favouriteNote);
+                .build();
+        FavouriteNote savedFavNote = favouriteNoteRepository.save(favouriteNote);
 
         return modelMapper.map(savedFavNote, FavouriteNoteResponseDTO.class);
     }

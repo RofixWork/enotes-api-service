@@ -3,6 +3,9 @@ package com.rofix.enotes_service.config;
 public class AppConstants {
     public static final String PAGE_NUMBER = "1";
     public static final String PAGE_SIZE = "5";
+    public static final String ROLE_ADMIN = "hasRole('ADMIN')";
+    public static final String ROLE_USER = "hasRole('USER')";
+    public static final String ROLE_ADMIN_USER = "hasAnyRole('USER', 'ADMIN')";
     public static final String TEMPLATE_VERIFY_ACCOUNT = """
              <!DOCTYPE html>
              <html>

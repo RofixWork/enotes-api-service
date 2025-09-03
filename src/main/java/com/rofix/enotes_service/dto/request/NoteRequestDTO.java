@@ -1,6 +1,5 @@
 package com.rofix.enotes_service.dto.request;
 
-import com.rofix.enotes_service.entity.Category;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

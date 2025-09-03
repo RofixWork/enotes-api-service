@@ -51,8 +51,8 @@ public class NoteServiceImpl implements NoteService {
                 .description(noteRequestDTO.getDescription())
                 .category(category)
                 .fileDetails(fileDetails)
-                .build(),
-        savedNote = noteRepository.save(note);
+                .build();
+        Note savedNote = noteRepository.save(note);
         LoggerUtils.createLog(Level.INFO, NoteServiceImpl.class.getName(), "createNote", "Note created successfully");
         return modelMapper.map(savedNote, NoteResponseDTO.class);
     }
@@ -160,7 +160,6 @@ public class NoteServiceImpl implements NoteService {
     public void copyNote(Long noteId) {
         Note note = noteHelper.getNoteNotDeletedOrThrow(noteId);
 
-        //TODO: CHECK USER VALIDATIONS
         Note copiedNote = Note.builder()
                 .title(note.getTitle())
                 .description(note.getDescription())
