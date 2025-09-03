@@ -6,7 +6,6 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,13 +23,6 @@ public class SwaggerConfig {
         info.setVersion("1.0.0");
         info.setContact(new Contact().email("wourkout123@gmail.com").name("Abdessamad Ait Oughenja"));
 
-//      servers
-        List<Server> servers = List.of(
-                new Server().url("http://localhost:8080").description("Dev"),
-                new Server().url("http://localhost:8081").description("Test"),
-                new Server().url("http://localhost:8082").description("Prod")
-        );
-
         // bearer sdbhkj.sdfdvs.sdfvsdc
         SecurityScheme securityScheme = new SecurityScheme().name("Authorization").scheme("bearer").type(SecurityScheme.Type.HTTP)
                 .bearerFormat("JWT").in(SecurityScheme.In.HEADER);
@@ -38,7 +30,6 @@ public class SwaggerConfig {
         Components component = new Components().addSecuritySchemes("Token", securityScheme);
 
         openAPI.setInfo(info);
-        openAPI.setServers(servers);
         openAPI.setComponents(component);
         openAPI.setSecurity(List.of(new SecurityRequirement().addList("Token")));
 

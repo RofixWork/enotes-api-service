@@ -1,7 +1,5 @@
 package com.rofix.enotes_service.endpoint;
 
-import static com.rofix.enotes_service.config.AppConstants.ROLE_ADMIN;
-import static com.rofix.enotes_service.config.AppConstants.ROLE_ADMIN_USER;
 import com.rofix.enotes_service.dto.request.CategoryRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,12 +10,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import static com.rofix.enotes_service.config.AppConstants.ROLE_ADMIN;
+import static com.rofix.enotes_service.config.AppConstants.ROLE_ADMIN_USER;
+
 @Tag(name = "Category", description = "All Category Endpoint APIs")
 @RequestMapping(value = "/api/v1/categories", produces = MediaType.APPLICATION_JSON_VALUE)
 public interface CategoryEndpoint {
 
     @Operation(summary = "Create Category Endpoint", tags = {"Category"}, description = "Admin Create new Category")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize(ROLE_ADMIN)
     ResponseEntity<?> createCategory(@Valid @RequestBody CategoryRequestDTO category);
 
     @Operation(summary = "Get All Categories Endpoint", tags = {"Category"}, description = "Admin get All Categories")

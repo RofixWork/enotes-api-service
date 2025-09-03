@@ -25,15 +25,16 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryHelper categoryHelper;
 
     @Override
+    @CacheEvict(value = {"getAllCategories", "getActiveCategories"}, allEntries = true)
     public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryDTO) {
 
-       categoryHelper.checkedCategory(categoryDTO.getName(), null);
+        categoryHelper.checkedCategory(categoryDTO.getName(), null);
 
         Category newCategory = modelMapper.map(categoryDTO, Category.class);
         Category savedCategory = categoryRepository.save(newCategory);
         log.info("[CategoryServiceImpl] :: [saveCategory] :: Category has been Saved Successfully...");
 
-        return modelMapper.map(savedCategory,CategoryResponseDTO.class);
+        return modelMapper.map(savedCategory, CategoryResponseDTO.class);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Cacheable("getActiveCategories")
     public List<CategoryResponseDTO> getActiveCategories() {
-        List<Category> activeCategories =  categoryRepository.findByIsActiveTrueAndIsDeletedFalse();
+        List<Category> activeCategories = categoryRepository.findByIsActiveTrueAndIsDeletedFalse();
         log.info("[CategoryServiceImpl] :: [getActiveCategories] :: Get All Active Categories...");
         return categoryHelper.getCategoryResponseDTO(activeCategories);
     }
@@ -79,8 +80,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Caching(
-            evict = { @CacheEvict(value = {"getAllCategories", "getActiveCategories"}, allEntries = true) },
-            put = { @CachePut(value = "getCategoryById", key = "#id") }
+            evict = {@CacheEvict(value = {"getAllCategories", "getActiveCategories"}, allEntries = true)},
+            put = {@CachePut(value = "getCategoryById", key = "#id")}
     )
     public CategoryResponseDTO editCategory(Long id, CategoryRequestDTO categoryDTO) {
         Category category = categoryHelper.getCategoryByIdThrow(id);
@@ -91,7 +92,7 @@ public class CategoryServiceImpl implements CategoryService {
         category = categoryRepository.save(category);
 
         log.info("[CategoryServiceImpl] :: [getCategoryById] :: Category with Id [{}] has been updated successfully...", id);
-        return modelMapper.map(category,CategoryResponseDTO.class);
+        return modelMapper.map(category, CategoryResponseDTO.class);
     }
 
 }
