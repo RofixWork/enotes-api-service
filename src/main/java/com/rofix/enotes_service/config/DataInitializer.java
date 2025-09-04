@@ -20,13 +20,15 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        List<Role> roles = new ArrayList<>(List.of(
-                Role.builder().name("ADMIN").build(),
-                Role.builder().name("USER").build()
-        ));
+        if (roleRepository.existsByNameIgnoreCase("admin") || roleRepository.existsByNameIgnoreCase("user")) {
+            List<Role> roles = new ArrayList<>(List.of(
+                    Role.builder().name("ADMIN").build(),
+                    Role.builder().name("USER").build()
+            ));
 
-        roleRepository.saveAll(roles);
-        LoggerUtils.createLog(Level.INFO, getClass().getName(), "run", "Roles had been Saved in DB.");
+            roleRepository.saveAll(roles);
+            LoggerUtils.createLog(Level.INFO, getClass().getName(), "run", "Roles had been Saved in DB.");
+        }
 
     }
 }
