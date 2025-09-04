@@ -6,7 +6,7 @@ spring:
   application:
     name: E-notes Service APIs
   profiles:
-    active: uat
+    active: dev
   mail:
     host: smtp.gmail.com
     port: 587
