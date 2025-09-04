@@ -79,6 +79,16 @@ It provides a full-featured **RESTful API** for managing **users, notes, categor
    cd enotes-api-service
    ```
 
+### ⚙️ Environment Variables
+
+This project uses environment variables for configuration (DB, JWT, Mail, etc.).  
+A template file `.env.local` is included in the repository to help you set up your environment.
+
+1. **Copy `.env.local` to `.env`**
+   ```bash
+   cp .env.local .env
+
+
 2. **Configure your database**
    Update connection details in:
 

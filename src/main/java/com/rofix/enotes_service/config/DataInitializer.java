@@ -20,8 +20,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
-        if (!roleRepository.existsByNameIgnoreCase("admin") || !roleRepository.existsByNameIgnoreCase("user")) {
+        if (roleRepository.existsByNameIgnoreCase("admin") || roleRepository.existsByNameIgnoreCase("user")) {
             List<Role> roles = new ArrayList<>(List.of(
                     Role.builder().name("ADMIN").build(),
                     Role.builder().name("USER").build()
@@ -30,5 +29,6 @@ public class DataInitializer implements CommandLineRunner {
             roleRepository.saveAll(roles);
             LoggerUtils.createLog(Level.INFO, getClass().getName(), "run", "Roles had been Saved in DB.");
         }
+
     }
 }
