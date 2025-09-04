@@ -53,6 +53,8 @@ It provides a full-featured **RESTful API** for managing **users, notes, categor
 * **API Documentation**: Swagger/OpenAPI for easy integration with frontend
 * **Monitoring**: Spring Boot Actuator for health & performance metrics
 * **Code Quality**: SonarQube integration for static analysis
+*
+    * **SonarQube** is integrated to **analyze code quality** and ensure adherence to **Clean Code** principles.
 * **Testing**: Unit & integration tests for **Category Service/Controller** and **Authentication**
 
 ---
@@ -126,7 +128,7 @@ mvn test
 * **MySQL / PostgreSQL**
 * **Swagger / OpenAPI**
 * **Actuator**
-* **SonarQube**
+* **SonarQube** (Clean Code analysis)
 * **JUnit + Mockito**
 
 ---
